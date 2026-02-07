@@ -1221,3 +1221,10 @@ body{
     justify-content: center;
   }
 }
+@media (max-width: 600px) {
+  .experience h1 {
+    font-size: 2.5rem;
+    letter-spacing: 2px;
+    text-align: center;
+  }
+}
