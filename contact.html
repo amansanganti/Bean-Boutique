@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact Us | Bean Boutique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <h2>BEAN BOUTIQUE</h2>
+
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+  </nav>
+</header>
+
+<section class="info">
+  <h2>Contact Us</h2>
+  <p>We’d love to hear from you. Reach out for queries, feedback, or collaborations.</p>
+</section>
+
+<section class="contact-section">
+
+  <!-- CONTACT FORM -->
+  <div class="contact-form">
+    <h3>Send Us a Message</h3>
+
+    <form>
+      <input type="text" placeholder="Full Name" required>
+      <input type="email" placeholder="Email Address" required>
+      <textarea rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
+
+  <!-- CONTACT INFO -->
+  <div class="contact-info">
+    <h3>Get in Touch</h3>
+    <p><i class="fa-solid fa-envelope"></i> hello@beanboutique.com</p>
+    <p><i class="fa-solid fa-phone"></i> +91 98765 43210</p>
+    <p><i class="fa-solid fa-location-dot"></i> Mumbai, India</p>
+
+    <div class="map-container">
+      <iframe
+        src="https://www.google.com/maps?q=Mumbai%20India&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Bean Boutique | Brewed with ❤️
+</footer>
+
+<script>
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
+
+</body>
+</html>

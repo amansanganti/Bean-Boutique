@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Brewing Equipment | Bean Boutique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <h2>BEAN BOUTIQUE</h2>
+
+  <button class="menu-toggle" onclick="toggleMenu()">
+    ☰
+  </button>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+  </nav>
+</header>
+
+<section class="info">
+  <h2>Brewing Equipment</h2>
+  <p>Discover professional brewing tools to craft café-quality coffee at home.</p>
+</section>
+
+<section class="brew-section">
+
+  <div class="brew-row">
+    <div class="brew-image">
+      <img src="espresso.jpg" alt="Espresso Machine">
+    </div>
+
+    <div class="brew-text">
+      <h3>Espresso Machine</h3>
+      <p>Professional brewing for bold flavour and crema-rich shots.</p>
+      <ul>
+        <li>Fine grind</li>
+        <li>High pressure extraction</li>
+        <li>Precise timing</li>
+        <li><b>$99.99 only</b></li>
+      </ul>
+
+      <button class="add-cart-btn"
+        onclick="addToCart('Espresso Machine', 8999, 'espresso.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- POUR OVER -->
+  <div class="brew-row reverse">
+    <div class="brew-image">
+      <img src="pour-over.jpg" alt="Pour Over">
+      <div class="brew-overlay">
+      </div>
+    </div>
+
+    <div class="brew-text">
+      <h3>Pour Over</h3>
+      <p>Precision brewing for clarity, balance, and nuanced flavours.</p>
+      <ul>
+        <li>Medium-fine grind</li>
+        <li>Slow circular pour</li>
+        <li>Bloom before brew</li>
+        <li><b>$14.35 only</b></li>
+      </ul>
+
+      <button class="add-cart-btn"
+        onclick="addToCart('Pour Over Kit', 1299, 'pour-over.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- FRENCH PRESS -->
+  <div class="brew-row">
+    <div class="brew-image">
+      <img src="frenchpress.jpg" alt="French Press">
+      <div class="brew-overlay">
+
+      </div>
+    </div>
+
+    <div class="brew-text">
+      <h3>French Press</h3>
+      <p>Simple immersion brewing for bold and textured coffee.</p>
+      <ul>
+        <li>Coarse grind</li>
+        <li>Long steeping</li>
+        <li>No paper filter</li>
+        <li><b>$17.67 only</b></li>
+      </ul>
+
+      <button class="add-cart-btn"
+        onclick="addToCart('French Press', 1599, 'frenchpress.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- MOKA POT -->
+  <div class="brew-row reverse">
+    <div class="brew-image">
+      <img src="moka.jpg" alt="Moka Pot">
+      <div class="brew-overlay">
+      </div>
+    </div>
+
+    <div class="brew-text">
+      <h3>Moka Pot</h3>
+      <p>Classic Italian brewing with bold intensity.</p>
+      <ul>
+        <li>Medium grind</li>
+        <li>Low heat extraction</li>
+        <li>Remove before sputter</li>
+        <li><b>$22.09 only</b></li>
+      </ul>
+
+      <button class="add-cart-btn"
+        onclick="addToCart('Moka Pot', 1999, 'moka.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Bean Boutique | Brewed with ❤️
+</footer>
+
+<script>
+gsap.from(".brew-row",{
+  opacity:0,
+  y:60,
+  stagger:.2,
+  duration:1,
+  ease:"power3.out"
+});
+</script>
+
+<script src="cart.js"></script>
+<script>
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
+</body>
+</html>

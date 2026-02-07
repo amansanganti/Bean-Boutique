@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Bean Boutique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+<div id="intro">
+  <div class="preview-wrapper">
+    <h1 class="brand-name">Bean Boutique</h1>
+
+    <div class="bean">
+      <div class="bean-part left"></div>
+      <div class="bean-part right"></div>
+      <div class="tile tile-1"></div>
+      <div class="tile tile-2"></div>
+      <div class="tile tile-3"></div>
+    </div>
+
+    <div class="loader"><span></span></div>
+  </div>
+</div>
+
+<div id="home">
+
+<header class="site-header">
+  <h2>BEAN BOUTIQUE</h2>
+
+  <button class="menu-toggle" onclick="toggleMenu()">
+    ☰
+  </button>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>Rich & Aromatic<br>Coffee Experience</h1>
+    <p>Premium beans, expert brewing and a warm coffee community.</p>
+    <form action="coffee-selection.html">
+    <button type="submit">Explore Blends</button>
+    </form>
+  </div>
+
+  <div class="cups" id="tiltArea">
+    <div class="cup one"><img src="cup1.png" alt="cup1"></div>
+    <div class="cup two"><img src="cup2.png" alt="cup2"></div>
+    <div class="cup three"><img src="cup3.png" alt="cup3"></div>
+    <div class="cup four"><img src="cup4.png" alt="cup4"></div>
+  </div>
+</section>
+
+<section class="experience">
+  <h1>EXPERIENCE</h1>
+  <h2>The Art of Coffee</h2>
+</section>
+
+<section class="slider-wrap">
+  <h2 class="visually-hidden">Featured Coffee Gallery</h2>
+  <div class="slider">
+    <div class="slides">
+      <img src="slide1.jpg" alt="slide1">
+      <img src="slide2.jpg" alt="slide2">
+      <img src="slide3.jpg" alt="slide3">
+      <img src="slide4.jpg" alt="slide4">
+      <img src="slide5.jpg" alt="slide5">
+    </div>
+  </div>
+</section>
+
+<section class="info">
+  <h2>Our Coffee World</h2>
+  <div class="cards">
+    <div><img src="beans.jpg" alt="beans"><p>Premium Coffee Beans 🫘</p></div>
+    <div><img src="brew.jpg" alt="brew"><p>Skilled Employees with Proper Equipment ☕️</p></div>
+    <div><img src="people.jpg" alt="people"><p>Enjoy just like our customer ☺️</p></div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Bean Boutique | Brewed with ❤️
+</footer>
+
+</div>
+
+<div class="modal" id="discountModal">
+  <div class="modal-box">
+    <h3>🎉 Get 10% Off Your First Order</h3>
+    <p>Sign up with your email to receive your discount.</p>
+    <input type="email" placeholder="Enter your email">
+    <button onclick="closeModal()">Get Discount</button>
+  </div>
+</div>
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+window.onload = () => {
+
+  if (sessionStorage.getItem("siteEntered")) {
+    showHome();
+    return;
+  }
+
+  sessionStorage.setItem("siteEntered", "true");
+
+  gsap.from(".brand-name",{opacity:0,y:-20,duration:0.8});
+
+  gsap.timeline()
+    .to(".tile",{opacity:1,stagger:.15})
+    .to(".tile",{x:()=>gsap.utils.random(-60,60),y:()=>gsap.utils.random(-60,60),duration:.6})
+    .to(".left",{x:"-120vw",y:"-120vh",duration:1.4})
+    .to(".right",{x:"120vw",y:"-120vh",duration:1.4},"<")
+    .to(".preview-wrapper",{opacity:0,duration:.6})
+    .add(showHome);
+};
+
+function showHome(){
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("home").style.display = "block";
+  document.body.style.overflow = "auto";
+
+  startHeroEffects();
+  startSlider();
+}
+
+function startHeroEffects(){
+  gsap.to(".cup",{
+    y:-25,
+    duration:3,
+    repeat:-1,
+    yoyo:true,
+    ease:"sine.inOut",
+    stagger:.3
+  });
+
+  gsap.to(".cup.one",{y:-120,scrollTrigger:{trigger:".info",scrub:1}});
+  gsap.to(".cup.two",{y:-160,scrollTrigger:{trigger:".info",scrub:1}});
+  gsap.to(".cup.three",{y:-100,scrollTrigger:{trigger:".info",scrub:1}});
+  gsap.to(".cup.four",{y:-180,scrollTrigger:{trigger:".info",scrub:1}});
+}
+
+function startSlider(){
+  gsap.to(".slides",{
+    xPercent:-400,
+    duration:25,
+    repeat:-1,
+    ease:"none"
+  });
+}
+
+const tiltArea=document.getElementById("tiltArea");
+tiltArea.addEventListener("mousemove",(e)=>{
+  const r=tiltArea.getBoundingClientRect();
+  const x=e.clientX-r.left-r.width/2;
+  const y=e.clientY-r.top-r.height/2;
+  gsap.to(".cups",{rotateY:x/12,rotateX:-y/12,duration:.3});
+});
+tiltArea.addEventListener("mouseleave",()=>{
+  gsap.to(".cups",{rotateX:0,rotateY:0,duration:.6});
+});
+
+const modal=document.getElementById("discountModal");
+if(!localStorage.getItem("visited")){
+  setTimeout(()=>modal.style.display="flex",2500);
+  localStorage.setItem("visited","true");
+}
+function closeModal(){
+  modal.style.display="none";
+}
+</script>
+<script>
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
+</body>
+</html>

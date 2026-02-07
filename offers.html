@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Special Offers & Subscriptions | Bean Boutique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <h2>BEAN BOUTIQUE</h2>
+
+  <button class="menu-toggle" onclick="toggleMenu()">
+    ☰
+  </button>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+  </nav>
+</header>
+
+<section class="info">
+  <h2>Special Discounts!!!</h2>
+  <p><b>Want to enjoy the coffee for low rate!!?</b> Just buy more to get discounts 😋 </p>
+</section>
+
+<section class="offer-section">
+
+  <div class="offer-card">
+    <h3>☕ First Order Discount</h3>
+    <p>Get <strong>10% OFF</strong> on your first coffee purchase.</p>
+    <span class="offer-tag">WELCOME10</span>
+  </div>
+
+  <div class="offer-card">
+    <h3>🎉 Brewing Combo Deal</h3>
+    <p>Buy any brewing equipment and get <strong>5% OFF</strong> premium beans.</p>
+    <span class="offer-tag">BREW5</span>
+  </div>
+
+  <div class="offer-card">
+    <h3>🔥 Limited Time Offer</h3>
+    <p>Free delivery on orders above <strong>$12</strong>.</p>
+    <span class="offer-tag">FREESHIP</span>
+  </div>
+
+</section>
+
+<section class="info">
+  <h2>Coffee Subscriptions</h2>
+  <p>Increase your caffeine intake by taking monthly subscription 😉 </p>
+</section>
+
+<section class="subscription-section">
+
+  <div class="subscription-card">
+    <h3>Starter Brew</h3>
+    <p class="price">$8 / month</p>
+    <ul>
+      <li>250g specialty coffee</li>
+      <li>Single-origin selection</li>
+      <li>Monthly delivery</li>
+    </ul>
+    <button>Subscribe</button>
+  </div>
+
+  <div class="subscription-card featured">
+    <h3>Classic Coffee</h3>
+    <p class="price">$15 / month</p>
+    <ul>
+      <li>500g premium blends</li>
+      <li>Roaster’s choice</li>
+      <li>Free delivery</li>
+    </ul>
+    <button>Subscribe</button>
+  </div>
+
+  <div class="subscription-card">
+    <h3>Barista Box</h3>
+    <p class="price">$10 / month</p>
+    <ul>
+      <li>1kg specialty coffee</li>
+      <li>Exclusive roasts</li>
+      <li>Brewing tips included</li>
+    </ul>
+    <button>Subscribe</button>
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Bean Boutique | Brewed with ❤️
+</footer>
+
+<script>
+gsap.from(".offer-card",{
+  opacity:0,
+  y:40,
+  stagger:.2,
+  duration:.8,
+  ease:"power3.out"
+});
+
+gsap.from(".subscription-card",{
+  opacity:0,
+  y:50,
+  stagger:.2,
+  duration:1,
+  ease:"power3.out"
+});
+</script>
+
+<script>
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
+</body>
+</html>

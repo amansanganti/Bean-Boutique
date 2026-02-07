@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Coffee Selection | Bean Boutique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <h2>BEAN BOUTIQUE</h2>
+
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+  </nav>
+</header>
+
+<section class="info">
+  <h2>Our Coffee Selection</h2>
+  <p>Explore our unique blends and single-origin coffees, crafted for every taste.</p>
+</section>
+<section class="info">
+  <h2 class="visually-hidden">Coffee Selection Information</h2>
+  <input
+    type="text"
+    id="coffeeSearch"
+    placeholder="Search coffees by name or taste..."
+  >
+</section>
+
+<section class="brew-section">
+
+  <!-- ETHIOPIAN -->
+  <div class="brew-row" data-search="ethiopian yirgacheffe citrus floral tea pour over chemex">
+    <div class="brew-image">
+      <img src="coffee1.jpg" alt="Ethiopian Yirgacheffe">
+    </div>
+    <div class="brew-text">
+      <h3>Ethiopian Yirgacheffe</h3>
+      <p>Bright single-origin coffee with delicate acidity.</p>
+      <ul>
+        <li>Citrus & floral notes</li>
+        <li>Tea-like finish</li>
+        <li>Pour Over, Chemex</li>
+        <li><b>$4.41 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('Ethiopian Yirgacheffe',399,'coffee1.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- COLOMBIAN -->
+  <div class="brew-row reverse" data-search="colombian supremo chocolate nutty balanced drip french press">
+    <div class="brew-image">
+      <img src="coffee2.jpg" alt="Colombian Supremo">
+    </div>
+    <div class="brew-text">
+      <h3>Colombian Supremo</h3>
+      <p>Smooth and well-rounded with comforting sweetness.</p>
+      <ul>
+        <li>Chocolate & nutty</li>
+        <li>Balanced body</li>
+        <li>Drip, French Press</li>
+        <li><b>$3.86 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('Colombian Supremo',349,'coffee2.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- HOUSE BLEND -->
+  <div class="brew-row" data-search="house signature blend caramel cocoa rich espresso moka pot">
+    <div class="brew-image">
+      <img src="coffee3.jpg" alt="House Signature Blend">
+    </div>
+    <div class="brew-text">
+      <h3>House Signature Blend</h3>
+      <p>Our flagship blend crafted for everyday enjoyment.</p>
+      <ul>
+        <li>Caramel & cocoa</li>
+        <li>Rich and smooth</li>
+        <li>Espresso, Moka Pot</li>
+        <li><b>$3.30 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('House Signature Blend',299,'coffee3.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- DARK ROAST -->
+  <div class="brew-row reverse" data-search="dark roast intenso smoky bold intense espresso french press">
+    <div class="brew-image">
+      <img src="coffee4.jpg" alt="Dark Roast Intenso">
+    </div>
+    <div class="brew-text">
+      <h3>Dark Roast Intenso</h3>
+      <p>Deep roasted beans with a powerful finish.</p>
+      <ul>
+        <li>Smoky & bold</li>
+        <li>Heavy body</li>
+        <li>Espresso, French Press</li>
+        <li><b>$3.64 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('Dark Roast Intenso',329,'coffee4.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- BLACK COFFEE -->
+  <div class="brew-row" data-search="black coffee strong bold bitter drip french press">
+    <div class="brew-image">
+      <img src="black.jpg" alt="Black Coffee">
+    </div>
+    <div class="brew-text">
+      <h3>Black Coffee</h3>
+      <p>Pure coffee brewed without milk or sugar.</p>
+      <ul>
+        <li>Bold & strong</li>
+        <li>Slightly bitter</li>
+        <li>Drip, French Press</li>
+        <li><b>$2.20 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('Black Coffee',199,'black.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- ESPRESSO -->
+  <div class="brew-row reverse" data-search="espresso intense rich strong moka pot espresso machine">
+    <div class="brew-image">
+      <img src="Espresso2.jpg" alt="Espresso">
+    </div>
+    <div class="brew-text">
+      <h3>Espresso</h3>
+      <p>Concentrated coffee shot with intense flavour.</p>
+      <ul>
+        <li>Rich & intense</li>
+        <li>Slight sweetness</li>
+        <li>Espresso Machine</li>
+        <li><b>$2.75 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('Espresso',249,'Espresso2.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- CAPPUCCINO -->
+  <div class="brew-row" data-search="cappuccino creamy smooth milk foam espresso">
+    <div class="brew-image">
+      <img src="Cappuccino.jpg" alt="Cappuccino">
+    </div>
+    <div class="brew-text">
+      <h3>Cappuccino</h3>
+      <p>Classic coffee with espresso, steamed milk & foam.</p>
+      <ul>
+        <li>Creamy & balanced</li>
+        <li>Foamy texture</li>
+        <li>Espresso Machine</li>
+        <li><b>$3.30 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('Cappuccino',299,'Cappuccino.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+  <!-- LATTE -->
+  <div class="brew-row reverse" data-search="latte mild milky smooth sweet espresso milk">
+    <div class="brew-image">
+      <img src="Latte.jpg" alt="Latte">
+    </div>
+    <div class="brew-text">
+      <h3>Latte</h3>
+      <p>Espresso blended with steamed milk.</p>
+      <ul>
+        <li>Mild & milky</li>
+        <li>Smooth finish</li>
+        <li>Espresso Machine</li>
+        <li><b>$3.08 only</b></li>
+      </ul>
+      <button class="add-cart-btn"
+        onclick="addToCart('Latte',279,'Latte.jpg')">
+        Add to Cart
+      </button>
+    </div>
+  </div>
+
+</section>
+
+<footer>
+  © 2026 Bean Boutique | Brewed with ❤️
+</footer>
+
+<script>
+function addToCart(name, price, image){
+  let cart = JSON.parse(localStorage.getItem("beanCart")) || [];
+  const existing = cart.find(item => item.name === name);
+
+  if(existing){
+    existing.qty += 1;
+  } else {
+    cart.push({ name, price, image, qty: 1 });
+  }
+
+  localStorage.setItem("beanCart", JSON.stringify(cart));
+  alert(name + " added to cart ☕");
+}
+
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+
+gsap.from(".brew-row",{
+  opacity:0,
+  y:60,
+  stagger:.2,
+  duration:1,
+  ease:"power3.out"
+});
+const coffeeSearch = document.getElementById("coffeeSearch");
+const coffeeRows = document.querySelectorAll(".brew-row");
+
+coffeeSearch.addEventListener("input", () => {
+  const value = coffeeSearch.value.toLowerCase();
+
+  coffeeRows.forEach(row => {
+    const text = row.dataset.search;
+    row.style.display = text.includes(value) ? "flex" : "none";
+  });
+});
+</script>
+
+</body>
+</html>

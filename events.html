@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Events & Workshops | Bean Boutique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <h2>BEAN BOUTIQUE</h2>
+
+  <button class="menu-toggle" onclick="toggleMenu()">
+    ☰
+  </button>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+  </nav>
+</header>
+
+<section class="brew-hero">
+  <h1>Events & Workshops</h1>
+  <p>
+    Join our curated coffee experiences — from guided tastings to hands-on
+    brewing workshops hosted by industry professionals.
+  </p>
+</section>
+
+<section class="brew-row">
+  <div class="brew-image">
+    <img src="event1.jpg" alt="Coffee Tasting Event">
+  </div>
+
+  <div class="brew-text">
+    <h2>Coffee Tasting Evening</h2>
+    <p>
+      An immersive guided tasting session featuring single-origin and
+      specialty blends.
+    </p>
+    <ul>
+      <li>Professional tasting guidance</li>
+      <li>Flavour wheel exploration</li>
+      <li>Small group experience</li>
+    </ul>
+
+    <button class="event-btn"
+      onclick="openRegister('Coffee Tasting Evening', 499)">
+      Register Now – $10
+    </button>
+  </div>
+</section>
+
+<section class="brew-row reverse">
+  <div class="brew-image">
+    <img src="event2.jpg" alt="Brewing Workshop">
+  </div>
+
+  <div class="brew-text">
+    <h2>Home Brewing Workshop</h2>
+    <p>
+      Learn hands-on brewing techniques to make café-quality coffee at home.
+    </p>
+    <ul>
+      <li>Live brewing demonstrations</li>
+      <li>Equipment & grind guidance</li>
+      <li>Take-home brewing notes</li>
+    </ul>
+
+    <button class="event-btn"
+      onclick="openRegister('Home Brewing Workshop', 699)">
+      Register Now – $12
+    </button>
+  </div>
+</section>
+
+<section class="brew-row">
+  <div class="brew-image">
+    <img src="event3.jpg" alt="Meet the Roaster">
+  </div>
+
+  <div class="brew-text">
+    <h2>Meet the Roaster</h2>
+    <p>
+      An interactive session exploring sourcing, roasting profiles,
+      and sustainability.
+    </p>
+    <ul>
+      <li>Direct interaction with roasters</li>
+      <li>Roast profile breakdown</li>
+      <li>Q&A session</li>
+    </ul>
+
+    <button class="event-btn"
+      onclick="openRegister('Meet the Roaster', 599)">
+      Register Now – $18
+    </button>
+  </div>
+</section>
+
+<footer>
+  © 2026 Bean Boutique | Brewed with ❤️
+</footer>
+
+<div class="modal" id="eventModal">
+  <div class="modal-box">
+    <h3 id="eventTitle">Event Registration</h3>
+
+    <form action="mailto:hello@beanboutique.com" method="post" enctype="text/plain">
+      <input type="text" placeholder="First Name" required>
+      <input type="text" placeholder="Last Name" required>
+      <input type="email" placeholder="Email Address" required>
+
+      <button type="submit" id="eventPriceBtn">
+        Confirm Registration
+      </button>
+    </form>
+
+    <button onclick="closeRegister()">Cancel</button>
+  </div>
+</div>
+
+<script>
+function openRegister(eventName, price){
+  document.getElementById("eventTitle").innerText = eventName;
+  document.getElementById("eventPriceBtn").innerText =
+    "Confirm Registration – ₹" + price;
+
+  document.getElementById("eventModal").style.display = "flex";
+}
+
+function closeRegister(){
+  document.getElementById("eventModal").style.display = "none";
+}
+
+gsap.from(".brew-row",{
+  opacity:0,
+  y:60,
+  stagger:.25,
+  duration:1,
+  ease:"power3.out"
+});
+</script>
+<script>
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+</script>
+</body>
+</html>
