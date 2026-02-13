@@ -1228,3 +1228,19 @@ body{
     text-align: center;
   }
 }
+.instagram{
+  color: white;
+  margin: 20px;
+  font-size: 25px;
+  
+}
+.facebook{
+  color: white;
+  margin: 20px;
+  font-size: 25px;
+}
+.twitter{
+  color: white;
+    margin: 20px;
+    font-size: 25px;
+}
