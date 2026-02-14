@@ -57,14 +57,9 @@ body{font-family:"Segoe UI",sans-serif;background:#e9dbcc;color:#3b2a1a;overflow
   transition: 0.5s;
 }
 
-.ExploreButton:hover span {
-  padding-right: 25px;
-}
+.ExploreButton:hover span {padding-right: 25px;}
 
-.ExploreButton:hover span:after {
-  opacity: 1;
-  right: 0;
-}
+.ExploreButton:hover span:after {opacity: 1;right: 0;}
 
 .loader span{
   display:block;
@@ -74,11 +69,7 @@ body{font-family:"Segoe UI",sans-serif;background:#e9dbcc;color:#3b2a1a;overflow
   border-radius:10px;
   animation:loading 1.5s infinite ease-in-out;
 }
-@keyframes loading{
-  0%{transform:translateX(-100%)}
-  50%{transform:translateX(150%)}
-  100%{transform:translateX(150%)}
-}
+@keyframes loading{0%{transform:translateX(-100%)}50%{transform:translateX(150%)}100%{transform:translateX(150%)}}
 
 .bean{width:220px;height:320px;position:relative}
 .bean-part{
@@ -137,10 +128,7 @@ nav a::after{
   background:#8b5a2b;
   transition:.3s;
 }
-nav a:hover{
-  color:#8b5a2b;
-  transform:translateY(-2px);
-}
+nav a:hover{color:#8b5a2b;transform:translateY(-2px);}
 nav a:hover::after{width:100%}
 
 .hero{
@@ -151,13 +139,10 @@ nav a:hover::after{width:100%}
   padding:0 8%;
   perspective:1200px;
 }
-.hero-text h1{
-  font-size:clamp(3rem,5vw,4rem);
-}
-.hero-text p{
-  margin:20px 0;
-  max-width:420px;
-}
+.hero-text h1{font-size:clamp(3rem,5vw,4rem);}
+
+.hero-text p{margin:20px 0;max-width:420px;}
+
 .hero-text button{
   padding:14px 28px;
   background:#3b2a1a;
@@ -166,17 +151,10 @@ nav a:hover::after{width:100%}
   cursor:pointer;
 }
 
-.cups{
-  position:relative;
-  height:520px;
+.cups{position:relative;height:520px;}
+.cup{position:absolute;width:220px;filter:drop-shadow(0 35px 50px rgba(0,0,0,.3));}
 
-}
-.cup{
-  position:absolute;
-  width:220px;
-  filter:drop-shadow(0 35px 50px rgba(0,0,0,.3));
-}
-.cup img{width:100%}
+.cup img{width:100%;}
 .cup.one{left:0;top:120px;z-index: 1;width: 250px;}
 .cup.two{left:160px;top:30px;transform:scale(1.1);z-index:2}
 .cup.three{left:320px;top:140px; z-index:4;}
@@ -187,19 +165,9 @@ nav a:hover::after{width:100%}
   z-index:2;
   width: 265px;
 }
-.cup.five{
-  position: absolute;
-  left:100px;
-  top:320px;
-  width: 340px;
-  transform:translateZ(120px) rotateY(10deg) scale(2);
-  z-index: 0;
-}
 
-.slider-wrap{
-  padding:80px 0;
-  text-align:center;
-}
+.slider-wrap{padding:80px 0;text-align:center;}
+
 .slider{
   width:75%;
   max-width:900px;
@@ -216,10 +184,8 @@ nav a:hover::after{width:100%}
   flex-shrink:0;
 }
 
-.info{
-  padding:60px 12% 30px;
-  text-align:center;
-}
+.info{padding:60px 12% 30px;text-align:center;}
+
 .cards{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
