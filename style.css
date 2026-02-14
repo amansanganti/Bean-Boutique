@@ -1,25 +1,11 @@
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:"Segoe UI",sans-serif;
-  background:#e9dbcc;
-  color:#3b2a1a;
-  overflow-x:hidden;
-}
-#intro{
-  position:fixed;
-  inset:0;
-  background:radial-gradient(circle,#1b0f07,#000);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  z-index:999;
-}
-.preview-wrapper{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:30px;
-}
+
+body{font-family:"Segoe UI",sans-serif;background:#e9dbcc;color:#3b2a1a;overflow-x:hidden;}
+
+#intro{position:fixed;inset:0;background:radial-gradient(circle,#1b0f07,#000);display:flex;justify-content:center;align-items:center;z-index:999;}
+
+
+.preview-wrapper{ display:flex; flex-direction:column; align-items:center; gap:30px;}
 
 .brand-name{
   font-size:2rem;
@@ -40,6 +26,45 @@ body{
 .tile-2{ top:45%; }
 .tile-3{ top:60%; }
 
+.ExploreButton {
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 300px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+}
+
+.ExploreButton span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.ExploreButton span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.ExploreButton:hover span {
+  padding-right: 25px;
+}
+
+.ExploreButton:hover span:after {
+  opacity: 1;
+  right: 0;
+}
 
 .loader span{
   display:block;
@@ -192,14 +217,9 @@ nav a:hover::after{width:100%}
   gap:30px;
   margin-top:40px;
 }
-.cards img{width:100%;border-radius:16px}
+.cards img{width:100%;border-radius:16px;box-shadow: 0 4px 8px rgba(0,0,0,0.7);}
 
-footer{
-  background:#3b2a1a;
-  color:#fff;
-  text-align:center;
-  padding:25px;
-}
+footer{background:#3b2a1a;color:#fff;text-align:center;padding:25px;}
 
 .modal{
   position:fixed;
@@ -1232,7 +1252,6 @@ body{
   color: white;
   margin: 20px;
   font-size: 25px;
-  
 }
 .facebook{
   color: white;
