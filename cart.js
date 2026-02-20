@@ -17,3 +17,10 @@ function addToCart(name, price, image){
   localStorage.setItem("beanCart", JSON.stringify(cart));
   alert(name + " added to cart ☕");
 }
+if(!sessionStorage.getItem("siteOpened")){
+  setTimeout(()=>{
+    discountModal.style.display="flex";
+  },2500);
+
+  sessionStorage.setItem("siteOpened","true");
+}

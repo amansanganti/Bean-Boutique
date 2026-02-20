@@ -4,7 +4,6 @@ body{font-family:"Segoe UI",sans-serif;background:#e9dbcc;color:#3b2a1a;overflow
 
 #intro{position:fixed;inset:0;background:radial-gradient(circle,#1b0f07,#000);display:flex;justify-content:center;align-items:center;z-index:999;}
 
-
 .preview-wrapper{ display:flex; flex-direction:column; align-items:center; gap:30px;}
 
 .brand-name{
@@ -26,53 +25,21 @@ body{font-family:"Segoe UI",sans-serif;background:#e9dbcc;color:#3b2a1a;overflow
 .tile-2{ top:45%; }
 .tile-3{ top:60%; }
 
-/* ===== PREMIUM EXPLORE BUTTON ===== */
-
-.ExploreButton{
-  position:relative;
-  padding:16px 40px;
-  border:none;
-  border-radius:50px;
-  font-size:18px;
-  font-weight:600;
-  color:white;
-  cursor:pointer;
-
-  /* coffee gradient */
-  background:linear-gradient(135deg,#6F4E37,#3b2a1a);
-
-  /* 3D shadow */
-  box-shadow:0 10px 25px rgba(0,0,0,.3);
-
-  transition:.3s ease;
+.ExploreButton {
+  border-radius: 4px;
+  background-color: #f4511e;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 300px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.7);
 }
 
-/* hover lift */
-.ExploreButton:hover{
-  transform:translateY(-5px);
-  box-shadow:0 18px 40px rgba(0,0,0,.4);
-}
-
-/* click press effect */
-.ExploreButton:active{
-  transform:scale(.95);
-}
-
-/* glow border effect */
-.ExploreButton::before{
-  content:"";
-  position:absolute;
-  inset:-3px;
-  border-radius:50px;
-  background:linear-gradient(135deg,#c4a484,#6F4E37,#c4a484);
-  z-index:-1;
-  opacity:0;
-  transition:.3s;
-}
-
-.ExploreButton:hover::before{
-  opacity:1;
-}
 .ExploreButton span {
   cursor: pointer;
   display: inline-block;
@@ -142,7 +109,6 @@ header{
   background:#f0c092;
   border-bottom:1px solid #e2d8c7;
   filter:drop-shadow(0 35px 50px rgba(0,0,0,.3));
-  height: 100px;
 }
 nav a{
   margin:0 15px;
@@ -216,107 +182,6 @@ nav a:hover::after{width:100%}
   object-fit:cover;
   flex-shrink:0;
 }
-
-/* auth buttons layout */
-.auth-buttons{
-  display:flex;
-  gap:15px;
-  justify-content:center;
-  margin-top:20px;
-}
-
-/* auth buttons */
-.auth-buttons button{
-  padding:12px 24px;
-  border:none;
-  border-radius:30px;
-  background:#3b2a1a;
-  color:white;
-  cursor:pointer;
-  transition:.3s;
-}
-
-.auth-buttons button:hover{
-  transform:translateY(-3px);
-  box-shadow:0 10px 20px rgba(0,0,0,.2);
-}
-
-/* HERO TEXT INITIAL STATE */
-
-.hero-title span,
-.hero-subtitle,
-.ExploreButton{
-  opacity:0;
-  transform:translateY(40px);
-}
-/* ===== 3D BUBBLE NAV ===== */
-
-.nav-links{
-  display:flex;
-  gap:18px;
-  align-items:center;
-}
-
-/* bubble style */
-.nav-bubble{
-  width:52px;
-  height:52px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:50%;
-
-  background:linear-gradient(145deg,#ffffff,#e6d3b1);
-  box-shadow:
-    8px 8px 20px rgba(0,0,0,.15),
-    -5px -5px 12px rgba(255,255,255,.7);
-
-  color:#3b2a1a;
-  font-size:20px;
-  text-decoration:none;
-
-  transition:.3s ease;
-}
-
-/* hover lift */
-.nav-bubble:hover{
-  transform:translateY(-6px) scale(1.08);
-  box-shadow:
-    12px 12px 30px rgba(0,0,0,.2),
-    -6px -6px 15px rgba(255,255,255,.8);
-}
-
-/* click press effect */
-.nav-bubble:active{
-  transform:scale(.92);
-}
-
-
-/* ===== LOGO ===== */
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  font-size:30px;
-  font-weight:700;
-  color:#3b2a1a;
-  background:linear-gradient(145deg,#f5efe6,#c4a484);
-  background:#f0c092;
-  backdrop-filter:blur(10px);
-}
-
-.logo img{
-  width:85px;
-  height:85px;
-  object-fit:contain;
-  transition:.3s ease;
-}
-
-.logo:hover img{
-  transform:scale(1.1) rotate(-5deg);
-}
-
 
 .info{padding:60px 12% 30px;text-align:center;}
 
@@ -519,6 +384,30 @@ footer{background:#3b2a1a;color:#fff;text-align:center;padding:25px;}
   opacity:1;
   transform:translateY(0);
 }
+/* auth buttons layout */
+.auth-buttons{
+  display:flex;
+  gap:15px;
+  justify-content:center;
+  margin-top:20px;
+}
+
+/* auth buttons */
+.auth-buttons button{
+  padding:12px 24px;
+  border:none;
+  border-radius:30px;
+  background:#3b2a1a;
+  color:white;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.auth-buttons button:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 20px rgba(0,0,0,.2);
+}
+
 .info h2{
   font-size:3rem;
   font-weight:700;
@@ -546,7 +435,6 @@ footer{background:#3b2a1a;color:#fff;text-align:center;padding:25px;}
   position: relative;
   padding-bottom: 120px;
 }
-
 
 @media (min-width: 1024px){
   .coffee-card{

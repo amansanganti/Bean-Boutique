@@ -33,64 +33,32 @@
 <div id="home">
 
 <header class="site-header">
-  <div class="logo">
-    <img src="logo.png" alt="Bean Boutique">
-    <span>Bean Boutique</span>
-  </div>
+  <h2>🫘 BEAN BOUTIQUE </h2>
 
   <button class="menu-toggle" onclick="toggleMenu()">
     ☰
   </button>
 
   <nav class="nav-links" id="navLinks">
-
-  <a href="index.html" class="nav-bubble">
-    <i class="fa-solid fa-house"></i>
-  </a>
-
-  <a href="coffee-selection.html" class="nav-bubble">
-    <i class="fa-solid fa-mug-hot"></i>
-  </a>
-
-  <a href="brewing.html" class="nav-bubble">
-    <i class="fa-solid fa-filter"></i>
-  </a>
-
-  <a href="events.html" class="nav-bubble">
-    <i class="fa-solid fa-calendar"></i>
-  </a>
-
-  <a href="contact.html" class="nav-bubble">
-    <i class="fa-solid fa-envelope"></i>
-  </a>
-
-  <a href="offers.html" class="nav-bubble">
-    <i class="fa-solid fa-tag"></i>
-  </a>
-
-  <a href="cart.html" class="nav-bubble cart-icon">
-    <i class="fa-solid fa-cart-shopping"></i>
-  </a>
-
-</nav>
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </a>
+  </nav>
 </header>
 
 <section class="hero">
   <div class="hero-text">
-
-    <h1 class="hero-title">
-      <span>Crafted with Care</span><br>
-      <span>Brewed to Perfection</span>
-    </h1>
-
-    <p class="hero-subtitle">
-      Premium beans, expert brewing and a warm coffee community.
-    </p>
-
+    <h1>Crafted with Care<br>Brewed to Perfection</h1>
+    <p>Premium beans, expert brewing and a warm coffee community.</p>
     <form action="coffee-selection.html">
-      <button class="ExploreButton">Explore Blends ☕</button>
+    <button class="ExploreButton" type="submit"><span>Explore Blends</span></button>
     </form>
-
   </div>
 
   <div class="cups" id="tiltArea">
@@ -153,6 +121,7 @@
 
   </div>
 </div>
+
 <!-- AUTH MODAL -->
 <div class="modal" id="authModal">
   <div class="modal-box">
@@ -201,26 +170,6 @@ window.onload = () => {
 };
 
 function showHome(){
-  // HERO TEXT ANIMATION
-  gsap.timeline()
-    .to(".hero-title span",{
-      opacity:1,
-      y:0,
-      duration:1,
-      stagger:.3,
-      ease:"power3.out"
-    })
-    .to(".hero-subtitle",{
-      opacity:1,
-      y:0,
-      duration:.8
-    },"-=0.4")
-    .to(".ExploreButton",{
-      opacity:1,
-      y:0,
-      duration:.8
-    },"-=0.4");
-    
   document.getElementById("intro").style.display = "none";
   document.getElementById("home").style.display = "block";
   document.body.style.overflow = "auto";
@@ -275,12 +224,9 @@ if(!sessionStorage.getItem("siteOpened")){
 
   sessionStorage.setItem("siteOpened","true");
 }
-
 function closeModal(){
   modal.style.display="none";
 }
-</script>
-<script>
 function toggleMenu(){
   document.getElementById("navLinks").classList.toggle("active");
 }
