@@ -33,32 +33,64 @@
 <div id="home">
 
 <header class="site-header">
-  <h2>🫘 BEAN BOUTIQUE </h2>
+  <div class="logo">
+    <img src="logo.png" alt="Bean Boutique">
+    <span>Bean Boutique</span>
+  </div>
 
   <button class="menu-toggle" onclick="toggleMenu()">
     ☰
   </button>
 
   <nav class="nav-links" id="navLinks">
-    <a href="index.html">Home</a>
-    <a href="coffee-selection.html">Beans</a>
-    <a href="brewing.html">Brewing</a>
-    <a href="events.html">Events</a>
-    <a href="contact.html">Contact</a>
-    <a href="offers.html">Offers</a>
-    <a href="cart.html" class="cart-icon">
-      <i class="fa-solid fa-cart-shopping"></i>
-    </a>
-  </nav>
+
+  <a href="index.html" class="nav-bubble">
+    <i class="fa-solid fa-house"></i>
+  </a>
+
+  <a href="coffee-selection.html" class="nav-bubble">
+    <i class="fa-solid fa-mug-hot"></i>
+  </a>
+
+  <a href="brewing.html" class="nav-bubble">
+    <i class="fa-solid fa-filter"></i>
+  </a>
+
+  <a href="events.html" class="nav-bubble">
+    <i class="fa-solid fa-calendar"></i>
+  </a>
+
+  <a href="contact.html" class="nav-bubble">
+    <i class="fa-solid fa-envelope"></i>
+  </a>
+
+  <a href="offers.html" class="nav-bubble">
+    <i class="fa-solid fa-tag"></i>
+  </a>
+
+  <a href="cart.html" class="nav-bubble cart-icon">
+    <i class="fa-solid fa-cart-shopping"></i>
+  </a>
+
+</nav>
 </header>
 
 <section class="hero">
   <div class="hero-text">
-    <h1>Crafted with Care<br>Brewed to Perfection</h1>
-    <p>Premium beans, expert brewing and a warm coffee community.</p>
+
+    <h1 class="hero-title">
+      <span>Crafted with Care</span><br>
+      <span>Brewed to Perfection</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Premium beans, expert brewing and a warm coffee community.
+    </p>
+
     <form action="coffee-selection.html">
-    <button class="ExploreButton" type="submit"><span>Explore Blends</span></button>
+      <button class="ExploreButton">Explore Blends ☕</button>
     </form>
+
   </div>
 
   <div class="cups" id="tiltArea">
@@ -110,10 +142,38 @@
 
 <div class="modal" id="discountModal">
   <div class="modal-box">
+
     <h3>🎉 Get 10% Off Your First Order</h3>
-    <p>Sign up with your email to receive your discount.</p>
-    <input type="email" placeholder="Enter your email">
-    <button onclick="closeModal()">Get Discount</button>
+    <p>Sign in or register to claim your discount.</p>
+
+    <div class="auth-buttons">
+      <button onclick="openAuth('signin')">Sign In</button>
+      <button onclick="openAuth('register')">Register</button>
+    </div>
+
+  </div>
+</div>
+<!-- AUTH MODAL -->
+<div class="modal" id="authModal">
+  <div class="modal-box">
+
+    <h3 id="authTitle">Sign In</h3>
+
+    <input type="email" placeholder="Email" required>
+    <input type="password" placeholder="Password" required>
+
+    <button onclick="completeAuth()">Continue</button>
+    <button onclick="closeAuth()">Cancel</button>
+
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="modal" id="successModal">
+  <div class="modal-box">
+    <h2>🎉 Congratulations!</h2>
+    <p>You have earned <b>10% discount</b> on your first order.</p>
+    <button onclick="closeSuccess()">Start Shopping ☕</button>
   </div>
 </div>
 
@@ -141,6 +201,26 @@ window.onload = () => {
 };
 
 function showHome(){
+  // HERO TEXT ANIMATION
+  gsap.timeline()
+    .to(".hero-title span",{
+      opacity:1,
+      y:0,
+      duration:1,
+      stagger:.3,
+      ease:"power3.out"
+    })
+    .to(".hero-subtitle",{
+      opacity:1,
+      y:0,
+      duration:.8
+    },"-=0.4")
+    .to(".ExploreButton",{
+      opacity:1,
+      y:0,
+      duration:.8
+    },"-=0.4");
+    
   document.getElementById("intro").style.display = "none";
   document.getElementById("home").style.display = "block";
   document.body.style.overflow = "auto";
@@ -185,11 +265,17 @@ tiltArea.addEventListener("mouseleave",()=>{
   gsap.to(".cups",{rotateX:0,rotateY:0,duration:.6});
 });
 
-const modal=document.getElementById("discountModal");
-if(!localStorage.getItem("visited")){
-  setTimeout(()=>modal.style.display="flex",2500);
-  localStorage.setItem("visited","true");
+const modal = document.getElementById("discountModal");
+
+/* show popup only first time website opens */
+if(!sessionStorage.getItem("siteOpened")){
+  setTimeout(()=>{
+    modal.style.display = "flex";
+  },2500);
+
+  sessionStorage.setItem("siteOpened","true");
 }
+
 function closeModal(){
   modal.style.display="none";
 }
@@ -197,6 +283,34 @@ function closeModal(){
 <script>
 function toggleMenu(){
   document.getElementById("navLinks").classList.toggle("active");
+}
+const discountModal = document.getElementById("discountModal");
+const authModal = document.getElementById("authModal");
+const successModal = document.getElementById("successModal");
+
+/* open login/register form */
+function openAuth(type){
+  discountModal.style.display="none";
+  authModal.style.display="flex";
+
+  document.getElementById("authTitle").innerText =
+    type === "signin" ? "Sign In" : "Register";
+}
+
+/* close auth */
+function closeAuth(){
+  authModal.style.display="none";
+}
+
+/* after login/register */
+function completeAuth(){
+  authModal.style.display="none";
+  successModal.style.display="flex";
+}
+
+/* close success popup */
+function closeSuccess(){
+  successModal.style.display="none";
 }
 </script>
 </body>
