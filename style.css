@@ -1238,7 +1238,7 @@ body{
   position:absolute;
   top:-8px;
   right:-12px;
-  background:red;
+  background:rgb(255, 0, 0);
   color:white;
   font-size:12px;
   border-radius:50%;
