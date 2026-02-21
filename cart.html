@@ -14,7 +14,10 @@
 <body>
 
 <header class="site-header">
-  <h2>🫘 BEAN BOUTIQUE</h2>
+  <div class="logo">
+    <img src="logo.png" alt="Bean Boutique">
+    <span>Bean Boutique</span>
+  </div>
 
   <button class="menu-toggle" onclick="toggleMenu()">
     ☰
@@ -29,6 +32,7 @@
     <a href="offers.html">Offers</a>
     <a href="cart.html" class="cart-icon">
       <i class="fa-solid fa-cart-shopping"></i>
+      <span id="cartCount">0</span>
     </a>
   </nav>
 </header>
@@ -43,11 +47,18 @@
 
   <div class="cart-summary">
     <h3>Order Summary</h3>
+
     <p>Total Items: <span id="itemCount">0</span></p>
-    <p>Total Price: $<span id="totalPrice">0</span></p>
+    <p>Subtotal: $<span id="subtotalPrice">0</span></p>
+
+    <!-- COUPON INPUT -->
+    <input type="text" id="couponCode" placeholder="Enter coupon code">
+    <button onclick="applyCoupon()">Apply Coupon</button>
+
+    <p>Discount: $<span id="discountAmount">0</span></p>
+    <p><b>Total Price: $<span id="totalPrice">0</span></b></p>
 
     <button class="checkout-btn">Proceed to Checkout</button>
-    <p class="note">Checkout will be enabled once online payments are activated.</p>
   </div>
 </section>
 
@@ -63,48 +74,62 @@
 <script>
 const cartContainer = document.getElementById("cartItems");
 const itemCountEl = document.getElementById("itemCount");
+const subtotalEl = document.getElementById("subtotalPrice");
 const totalPriceEl = document.getElementById("totalPrice");
+const discountEl = document.getElementById("discountAmount");
 
 let cart = JSON.parse(localStorage.getItem("beanCart")) || [];
+let discount = 0;
+
+// available coupons
+const coupons = {
+  "WELCOME10": 0.10,
+  "BREW5": 0.05,
+  "FREESHIP": 0.15
+};
 
 function renderCart(){
   cartContainer.innerHTML = "";
-  let total = 0;
+
+  let subtotal = 0;
   let count = 0;
 
   if(cart.length === 0){
-    cartContainer.innerHTML = "<p class='empty'>Put some caffeine or its maker in this cart 😁☕</p>";
+    cartContainer.innerHTML = "<p class='empty'>Put some caffeine ☕</p>";
   }
 
-  cart.forEach((item, index)=>{
-    total += item.price * item.qty;
+  cart.forEach((item,index)=>{
+    subtotal += item.price * item.qty;
     count += item.qty;
 
-    const div = document.createElement("div");
-    div.className = "cart-item";
-    div.innerHTML = `
-    <img src="${item.image}">
+    const div=document.createElement("div");
+    div.className="cart-item";
+
+    div.innerHTML=`
+      <img src="${item.image}">
       <div class="cart-details">
         <h4>${item.name}</h4>
-        <p>₹${item.price}</p>
+        <p>$${item.price}</p>
         <input type="number" min="1" value="${item.qty}"
-          onchange="updateQty(${index}, this.value)">
+        onchange="updateQty(${index},this.value)">
       </div>
       <button class="remove-btn" onclick="removeItem(${index})">✕</button>
     `;
+
     cartContainer.appendChild(div);
   });
 
+  let finalTotal = subtotal - discount;
+
   itemCountEl.innerText = count;
-  totalPriceEl.innerText = total;
+  subtotalEl.innerText = subtotal.toFixed(2);
+  totalPriceEl.innerText = finalTotal.toFixed(2);
 
   localStorage.setItem("beanCart", JSON.stringify(cart));
-
-  gsap.from(".cart-item",{opacity:0,y:30,stagger:.1});
 }
 
-function updateQty(index, value){
-  cart[index].qty = parseInt(value);
+function updateQty(index,value){
+  cart[index].qty=parseInt(value);
   renderCart();
 }
 
@@ -113,12 +138,33 @@ function removeItem(index){
   renderCart();
 }
 
-renderCart();
-</script>
-<script>
-function toggleMenu(){
-  document.getElementById("navLinks").classList.toggle("active");
+function applyCoupon(){
+  const code=document.getElementById("couponCode").value.toUpperCase();
+  let subtotal=parseFloat(subtotalEl.innerText);
+
+  if(coupons[code]){
+    discount=subtotal * coupons[code];
+    discountEl.innerText=discount.toFixed(2);
+    alert("Coupon Applied ✅");
+  } else{
+    discount=0;
+    discountEl.innerText=0;
+    alert("Invalid coupon ❌");
+  }
+
+  renderCart();
 }
+
+renderCart();
+function updateCartCount(){
+  const cart = JSON.parse(localStorage.getItem("beanCart")) || [];
+  const total = cart.reduce((sum,item)=>sum + item.qty,0);
+
+  const countEl=document.getElementById("cartCount");
+  if(countEl) countEl.innerText=total;
+}
+
+updateCartCount();
 </script>
 </body>
 </html>
