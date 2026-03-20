@@ -1291,3 +1291,29 @@ body{
     margin: 20px;
     font-size: 25px;
 }
+#applyCoupon{
+  border-radius: 40px;
+  background-color: #210c05;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 15px;
+  padding: 10px;
+  width: 150px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 2px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+
+}
+
+#couponCode{
+ border: 2px solid #e8e8e8;
+ padding: 10px;
+ border-radius: 10px;
+ background-color: #212121;
+ font-size: small;
+ font-weight: bold;
+ text-align: center;
+ color: white;
+}
