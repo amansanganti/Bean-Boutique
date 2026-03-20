@@ -5,10 +5,19 @@
 <title>Special Offers & Subscriptions | Bean Boutique</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Security Headers -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 <link rel="stylesheet"
  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="security.js"></script>
 </head>
 
 <body>
@@ -79,7 +88,7 @@
       <li>Single-origin selection</li>
       <li>Monthly delivery</li>
     </ul>
-    <button>Subscribe</button>
+    <button class="subscribe-btn" onclick="openSubscription('Starter Brew', 8)">Subscribe</button>
   </div>
 
   <div class="subscription-card featured">
@@ -90,7 +99,7 @@
       <li>Roaster’s choice</li>
       <li>Free delivery</li>
     </ul>
-    <button>Subscribe</button>
+    <button class="subscribe-btn" onclick="openSubscription('Classic Coffee', 15)">Subscribe</button>
   </div>
 
   <div class="subscription-card">
@@ -101,10 +110,79 @@
       <li>Exclusive roasts</li>
       <li>Brewing tips included</li>
     </ul>
-    <button>Subscribe</button>
+    <button class="subscribe-btn" onclick="openSubscription('Barista Box', 10)">Subscribe</button>
   </div>
 
 </section>
+
+<!-- SUBSCRIPTION MODAL -->
+<div class="modal" id="subscriptionModal">
+  <div class="subscription-form-container">
+    <button class="modal-close" onclick="closeSubscription()">✕</button>
+    
+    <h2 id="subTitle">Subscribe to Starter Brew</h2>
+    <p class="sub-price">$<span id="subPrice">0</span> / month</p>
+    
+    <div class="sub-benefits">
+      <h4>Here's what you'll get:</h4>
+      <ul id="subBenefitsList">
+        <li>✓ Premium coffee delivered monthly</li>
+        <li>✓ Exclusive member discounts</li>
+        <li>✓ Early access to new roasts</li>
+      </ul>
+    </div>
+
+    <form id="subscriptionForm" onsubmit="handleSubscription(event)">
+      <input type="hidden" name="csrf_token" id="csrfTokenSub" value="">
+      
+      <div class="form-group">
+        <label for="subFirstName">First Name</label>
+        <input type="text" id="subFirstName" placeholder="John" required maxlength="50">
+      </div>
+
+      <div class="form-group">
+        <label for="subLastName">Last Name</label>
+        <input type="text" id="subLastName" placeholder="Doe" required maxlength="50">
+      </div>
+
+      <div class="form-group">
+        <label for="subEmail">Email Address</label>
+        <input type="email" id="subEmail" placeholder="john@example.com" required maxlength="254">
+      </div>
+
+      <div class="form-group">
+        <label for="subPhone">Phone Number</label>
+        <input type="tel" id="subPhone" placeholder="+1 (555) 123-4567" required>
+      </div>
+
+      <div class="form-group">
+        <label for="subAddress">Delivery Address</label>
+        <textarea id="subAddress" placeholder="Street address, City, State, ZIP" rows="3" required maxlength="200"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="subDuration">Subscription Duration</label>
+        <select id="subDuration" required>
+          <option value="1">1 Month</option>
+          <option value="3" selected>3 Months</option>
+          <option value="6">6 Months</option>
+          <option value="12">12 Months (Best Value!)</option>
+        </select>
+      </div>
+
+      <div class="pricing-summary">
+        <p>Monthly Price: $<span id="summaryPrice">8</span></p>
+        <p>Duration: <span id="summaryDuration">3 Months</span></p>
+        <p class="total-price"><strong>Total: $<span id="summaryTotal">24</span></strong></p>
+      </div>
+
+      <div id="subError" style="color: #d32f2f; font-size: 12px; margin: 10px 0; display: none;"></div>
+
+      <button type="submit" class="submit-btn">Complete Subscription</button>
+      <button type="button" class="cancel-btn" onclick="closeSubscription()">Cancel</button>
+    </form>
+  </div>
+</div>
 
 <footer>
   <a href="https://www.instagram.com" class="instagram"><i class="fa-brands fa-instagram"></i></a>
@@ -136,11 +214,151 @@ function toggleMenu(){
   document.getElementById("navLinks").classList.toggle("active");
 }
 function updateCartCount(){
-  const cart = JSON.parse(localStorage.getItem("beanCart")) || [];
-  const total = cart.reduce((sum,item)=>sum + item.qty,0);
+  const cart = safeGetStorage("beanCart") || [];
+  const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
 
   const countEl=document.getElementById("cartCount");
-  if(countEl) countEl.innerText=total;
+  if(countEl) setInnerText(countEl, total);
+}
+
+// Subscription Functions
+function openSubscription(planName, price) {
+  if(!checkRateLimit('subscription_open', 10, 60000)) {
+    alert(handleSecurityError('rateLimit'));
+    return;
+  }
+
+  injectCSRFToken();
+  document.getElementById("csrfTokenSub").value = getCSRFToken();
+  
+  // Update title and price
+  document.getElementById("subTitle").textContent = "Subscribe to " + sanitizeInput(planName);
+  document.getElementById("subPrice").textContent = price.toString();
+  document.getElementById("summaryPrice").textContent = price.toString();
+  
+  // Calculate total based on selected duration
+  const durationSelect = document.getElementById("subDuration");
+  const months = parseInt(durationSelect.value) || 3;
+  const total = (months * price).toFixed(2);
+  
+  const monthText = months === 1 ? "1 Month" : months + " Months";
+  document.getElementById("summaryDuration").textContent = monthText;
+  document.getElementById("summaryTotal").textContent = total;
+  
+  const modal = document.getElementById("subscriptionModal");
+  modal.style.display = "flex";
+  
+  document.getElementById("subscriptionForm").reset();
+  document.getElementById("subError").style.display = "none";
+}
+
+function closeSubscription() {
+  document.getElementById("subscriptionModal").style.display = "none";
+  clearSensitiveData();
+}
+
+// Update pricing summary when duration changes
+document.addEventListener('DOMContentLoaded', () => {
+  injectCSRFToken();
+  
+  const durationSelect = document.getElementById("subDuration");
+  const priceSpan = document.getElementById("summaryPrice");
+  
+  if (durationSelect) {
+    durationSelect.addEventListener('change', () => {
+      const months = parseInt(durationSelect.value);
+      const monthlyPrice = parseFloat(priceSpan.innerText) || 8;
+      const total = (months * monthlyPrice).toFixed(2);
+      
+      const monthText = months === 1 ? "1 Month" : months + " Months";
+      setTextContent(document.getElementById("summaryDuration"), monthText);
+      setTextContent(document.getElementById("summaryTotal"), total);
+    });
+    
+    // Trigger initial calculation
+    durationSelect.dispatchEvent(new Event('change'));
+  }
+});
+
+function handleSubscription(event) {
+  event.preventDefault();
+
+  if(!checkRateLimit('subscription_submit', 3, 300000)) {
+    alert(handleSecurityError('rateLimit'));
+    return;
+  }
+
+  const firstName = document.getElementById("subFirstName").value.trim();
+  const lastName = document.getElementById("subLastName").value.trim();
+  const email = document.getElementById("subEmail").value.trim();
+  const phone = document.getElementById("subPhone").value.trim();
+  const address = document.getElementById("subAddress").value.trim();
+  const duration = document.getElementById("subDuration").value;
+  const csrfToken = document.getElementById("csrfTokenSub").value;
+  const errorDiv = document.getElementById("subError");
+
+  // Validate CSRF token
+  if (!validateCSRFToken(csrfToken)) {
+    setTextContent(errorDiv, handleSecurityError('csrf'));
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  // Validate inputs
+  if (!firstName || firstName.length < 2) {
+    setTextContent(errorDiv, "Please enter a valid first name");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  if (!lastName || lastName.length < 2) {
+    setTextContent(errorDiv, "Please enter a valid last name");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    setTextContent(errorDiv, "Please enter a valid email address");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  if (!isValidPhone(phone)) {
+    setTextContent(errorDiv, "Please enter a valid phone number");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  if (!address || address.length < 10) {
+    setTextContent(errorDiv, "Please enter a valid delivery address");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  // Sanitize inputs
+  const subscriptionData = {
+    firstName: sanitizeInput(firstName),
+    lastName: sanitizeInput(lastName),
+    email: sanitizeInput(email),
+    phone: sanitizeInput(phone),
+    address: sanitizeInput(address),
+    duration: parseInt(duration),
+    planName: document.getElementById("subTitle").innerText.replace("Subscribe to ", ""),
+    sessionId: generateSecureID(),
+    timestamp: Date.now()
+  };
+
+  // Save subscription data securely
+  safeSetStorage('subscription', subscriptionData);
+
+  // Show success message
+  alert("✓ Subscription initiated! Check your email for confirmation.");
+  
+  // Close modal
+  closeSubscription();
+  
+  // Reset form
+  document.getElementById("subscriptionForm").reset();
 }
 
 updateCartCount();

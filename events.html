@@ -5,11 +5,20 @@
 <title>Events & Workshops | Bean Boutique</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Security Headers -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
 <link rel="stylesheet" href="style.css">
 
 <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 <link rel="stylesheet"
  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="security.js"></script>
 </head>
 
 <body>
@@ -61,11 +70,13 @@
       <li>Professional tasting guidance</li>
       <li>Flavour wheel exploration</li>
       <li>Small group experience</li>
+      <li><i class="fa-solid fa-clock"></i> Saturday, 6:00 PM - 8:00 PM</li>
+      <li><i class="fa-solid fa-location-dot"></i> Downtown Cafe Studio</li>
     </ul>
 
     <button class="event-btn"
-      onclick="openRegister('Coffee Tasting Evening', 499)">
-      Register Now – $10
+      onclick="openRegister('Coffee Tasting Evening', 6)">
+      Register Now – $6
     </button>
   </div>
 </section>
@@ -84,11 +95,13 @@
       <li>Live brewing demonstrations</li>
       <li>Equipment & grind guidance</li>
       <li>Take-home brewing notes</li>
+      <li><i class="fa-solid fa-clock"></i> Sunday, 2:00 PM - 4:00 PM</li>
+      <li><i class="fa-solid fa-location-dot"></i> Bean Boutique Training Center</li>
     </ul>
 
     <button class="event-btn"
-      onclick="openRegister('Home Brewing Workshop', 699)">
-      Register Now – $12
+      onclick="openRegister('Home Brewing Workshop', 8)">
+      Register Now – $8
     </button>
   </div>
 </section>
@@ -108,11 +121,13 @@
       <li>Direct interaction with roasters</li>
       <li>Roast profile breakdown</li>
       <li>Q&A session</li>
+      <li><i class="fa-solid fa-clock"></i> Friday, 7:00 PM - 9:00 PM</li>
+      <li><i class="fa-solid fa-location-dot"></i> Bean Roastery & Lab</li>
     </ul>
 
     <button class="event-btn"
-      onclick="openRegister('Meet the Roaster', 599)">
-      Register Now – $18
+      onclick="openRegister('Meet the Roaster', 7)">
+      Register Now – $7
     </button>
   </div>
 </section>
@@ -148,7 +163,7 @@
 function openRegister(eventName, price){
   document.getElementById("eventTitle").innerText = eventName;
   document.getElementById("eventPriceBtn").innerText =
-    "Confirm Registration – ₹" + price;
+    "Confirm Registration – $" + price;
 
   document.getElementById("eventModal").style.display = "flex";
 }
@@ -168,11 +183,11 @@ function toggleMenu(){
   document.getElementById("navLinks").classList.toggle("active");
 }
 function updateCartCount(){
-  const cart = JSON.parse(localStorage.getItem("beanCart")) || [];
-  const total = cart.reduce((sum,item)=>sum + item.qty,0);
+  const cart = safeGetStorage("beanCart") || [];
+  const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
 
   const countEl=document.getElementById("cartCount");
-  if(countEl) countEl.innerText=total;
+  if(countEl) setInnerText(countEl, total);
 }
 
 updateCartCount();

@@ -5,10 +5,20 @@
 <title>Shopping Cart | Bean Boutique</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Security Headers -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
 <link rel="stylesheet" href="style.css">
 <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 <link rel="stylesheet"
  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="security.js"></script>
+<script src="cart.js"></script>
 </head>
 
 <body>
@@ -78,7 +88,7 @@ const subtotalEl = document.getElementById("subtotalPrice");
 const totalPriceEl = document.getElementById("totalPrice");
 const discountEl = document.getElementById("discountAmount");
 
-let cart = JSON.parse(localStorage.getItem("beanCart")) || [];
+let cart = safeGetStorage("beanCart") || [];
 let discount = 0;
 
 // available coupons
@@ -121,11 +131,11 @@ function renderCart(){
 
   let finalTotal = subtotal - discount;
 
-  itemCountEl.innerText = count;
-  subtotalEl.innerText = subtotal.toFixed(2);
-  totalPriceEl.innerText = finalTotal.toFixed(2);
+  setInnerText(itemCountEl, count);
+  setInnerText(subtotalEl, subtotal.toFixed(2));
+  setInnerText(totalPriceEl, finalTotal.toFixed(2));
 
-  localStorage.setItem("beanCart", JSON.stringify(cart));
+  safeSetStorage("beanCart", cart);
 }
 
 function updateQty(index,value){
@@ -157,11 +167,11 @@ function applyCoupon(){
 
 renderCart();
 function updateCartCount(){
-  const cart = JSON.parse(localStorage.getItem("beanCart")) || [];
-  const total = cart.reduce((sum,item)=>sum + item.qty,0);
+  const cart = safeGetStorage("beanCart") || [];
+  const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
 
   const countEl=document.getElementById("cartCount");
-  if(countEl) countEl.innerText=total;
+  if(countEl) setInnerText(countEl, total);
 }
 
 updateCartCount();

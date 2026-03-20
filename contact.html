@@ -5,9 +5,18 @@
 <title>Contact Us | Bean Boutique</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Security Headers -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; frame-src https://www.google.com; connect-src 'self' https://www.google.com;">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet"
  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="security.js"></script>
 </head>
 
 <body>
@@ -44,10 +53,17 @@
   <div class="contact-form">
     <h3>Send Us a Message</h3>
 
-    <form>
-      <input type="text" placeholder="Full Name" required>
-      <input type="email" placeholder="Email Address" required>
-      <textarea rows="5" placeholder="Your Message" required></textarea>
+    <div id="contactError" style="color: red; font-size: 12px; margin: 10px 0; display: none;"></div>
+
+    <form id="contactForm" onsubmit="handleContactSubmit(event)">
+      <input type="hidden" name="csrf_token" id="csrfTokenContact" value="">
+      
+      <input type="text" id="contactName" placeholder="Full Name" required maxlength="50">
+      <input type="email" id="contactEmail" placeholder="Email Address" required maxlength="254">
+      <textarea id="contactMessage" rows="5" placeholder="Your Message" required maxlength="1000"></textarea>
+      
+      <p id="charCount" style="font-size: 12px; text-align: right; margin: 5px 0;">0/1000</p>
+      
       <button type="submit">Send Message</button>
     </form>
   </div>
@@ -79,9 +95,106 @@
 </footer>
 
 <script>
+// Initialize CSRF token when page loads
+window.addEventListener('DOMContentLoaded', () => {
+  injectCSRFToken();
+  document.getElementById("csrfTokenContact").value = getCSRFToken();
+  
+  // Add character counter
+  const messageInput = document.getElementById("contactMessage");
+  messageInput.addEventListener('input', () => {
+    const charCount = messageInput.value.length;
+    document.getElementById("charCount").innerText = charCount + "/1000";
+  });
+});
+
 function toggleMenu(){
   document.getElementById("navLinks").classList.toggle("active");
 }
+
+// Secure contact form submission
+function handleContactSubmit(event) {
+  event.preventDefault();
+
+  // Rate limiting
+  if (!checkRateLimit('contact_submit', 3, 300000)) { // 3 submissions per 5 mins
+    alert(handleSecurityError('rateLimit'));
+    return;
+  }
+
+  const name = document.getElementById("contactName").value.trim();
+  const email = document.getElementById("contactEmail").value.trim();
+  const message = document.getElementById("contactMessage").value.trim();
+  const csrfToken = document.getElementById("csrfTokenContact").value;
+  const errorDiv = document.getElementById("contactError");
+
+  // Validate CSRF token
+  if (!validateCSRFToken(csrfToken)) {
+    setTextContent(errorDiv, handleSecurityError('csrf'));
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  // Validate inputs
+  if (!name || name.length < 2) {
+    setTextContent(errorDiv, "Please enter a valid name (at least 2 characters)");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    setTextContent(errorDiv, "Please enter a valid email address");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  if (!message || message.length < 10) {
+    setTextContent(errorDiv, "Please enter a message (at least 10 characters)");
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  // Sanitize inputs
+  const sanitizedName = sanitizeInput(name);
+  const sanitizedEmail = sanitizeInput(email);
+  const sanitizedMessage = sanitizeInput(message);
+
+  // Prepare secure contact data
+  const contactData = {
+    name: sanitizedName,
+    email: sanitizedEmail,
+    message: sanitizedMessage,
+    timestamp: Date.now(),
+    sessionId: generateSecureID()
+  };
+
+  // In production, send this to server via HTTPS with verification
+  console.log("Contact form submission validated:", contactData);
+
+  // Show success message
+  alert("✓ Thank you for your message! We'll get back to you soon.");
+  
+  // Reset form
+  document.getElementById("contactForm").reset();
+  errorDiv.style.display = "none";
+  document.getElementById("charCount").innerText = "0/1000";
+
+  // Clear sensitive data from memory after sending
+  setTimeout(() => {
+    clearSensitiveData();
+  }, 1000);
+}
+
+function updateCartCount(){
+  const cart = safeGetStorage("beanCart") || [];
+  const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
+
+  const countEl=document.getElementById("cartCount");
+  if(countEl) setInnerText(countEl, total);
+}
+
+updateCartCount();
+</script>
 function updateCartCount(){
   const cart = JSON.parse(localStorage.getItem("beanCart")) || [];
   const total = cart.reduce((sum,item)=>sum + item.qty,0);

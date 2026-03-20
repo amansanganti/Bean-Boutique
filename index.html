@@ -5,31 +5,24 @@
 <title>Bean Boutique</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- Security Headers -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' https://www.google.com; frame-src https://www.google.com;">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
 <link rel="stylesheet" href="style.css">
 
 <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
 <link rel="stylesheet"
  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="security.js"></script>
 </head>
 
 <body>
-<div id="intro">
-  <div class="preview-wrapper">
-    <h1 class="brand-name">Bean Boutique</h1>
-
-    <div class="bean">
-      <div class="bean-part left"></div>
-      <div class="bean-part right"></div>
-      <div class="tile tile-1"></div>
-      <div class="tile tile-2"></div>
-      <div class="tile tile-3"></div>
-    </div>
-
-    <div class="loader"><span></span></div>
-  </div>
-</div>
-
 <div id="home">
 
 <header class="site-header">
@@ -94,9 +87,24 @@
 <section class="info">
   <h2>Our Coffee World</h2>
   <div class="cards">
-    <div><img src="beans.jpg" alt="beans"><br><p><b>Premium Coffee Beans 🫘</b></p></div>
-    <div><img src="brew.jpg" alt="brew"><br><p><b>Expertly Brewed Coffee ☕️</b></p></div>
-    <div><img src="people.jpg" alt="people"><br><p><b>Enjoy just like our customer ☺️</b></p></div>
+    <div class="card-item">
+      <div class="card-image-wrapper">
+        <img src="beans.jpg" alt="beans">
+      </div>
+      <p><b>Premium Coffee Beans 🫘</b></p>
+    </div>
+    <div class="card-item">
+      <div class="card-image-wrapper">
+        <img src="brew.jpg" alt="brew">
+      </div>
+      <p><b>Expertly Brewed Coffee ☕️</b></p>
+    </div>
+    <div class="card-item">
+      <div class="card-image-wrapper">
+        <img src="people.jpg" alt="people">
+      </div>
+      <p><b>Enjoy just like our customer ☺️</b></p>
+    </div>
   </div>
 </section>
 
@@ -132,8 +140,21 @@
 
     <h3 id="authTitle">Sign In</h3>
 
-    <input type="email" placeholder="Email" required>
-    <input type="password" placeholder="Password" required>
+    <input type="hidden" name="csrf_token" id="csrfToken" value="">
+
+    <input type="email" id="authEmail" placeholder="Email" required maxlength="254">
+    <input type="password" id="authPassword" placeholder="Password" required maxlength="128">
+    
+    <div id="passwordStrength" style="display:none; margin: 10px 0; font-size: 12px;">
+      <p id="passwordStrengthText"></p>
+      <div style="display: flex; gap: 5px;">
+        <div class="strength-meter" style="flex: 1; height: 4px; background: #ddd;"></div>
+      </div>
+    </div>
+
+    <input type="password" id="authConfirmPassword" placeholder="Confirm Password" style="display:none;" maxlength="128">
+
+    <div id="authError" style="color: red; font-size: 12px; margin: 10px 0; display: none;"></div>
 
     <button onclick="completeAuth()">Continue</button>
     <button onclick="closeAuth()">Cancel</button>
@@ -154,32 +175,14 @@
 gsap.registerPlugin(ScrollTrigger);
 
 window.onload = () => {
-
-  if (sessionStorage.getItem("siteEntered")) {
-    showHome();
-    return;
-  }
-
-  sessionStorage.setItem("siteEntered", "true");
-
-  gsap.from(".brand-name",{opacity:0,y:-20,duration:0.8});
-
-  gsap.timeline()
-    .to(".tile",{opacity:1,stagger:.15})
-    .to(".tile",{x:()=>gsap.utils.random(-60,60),y:()=>gsap.utils.random(-60,60),duration:.6})
-    .to(".left",{x:"-120vw",y:"-120vh",duration:1.4})
-    .to(".right",{x:"120vw",y:"-120vh",duration:1.4},"<")
-    .to(".preview-wrapper",{opacity:0,duration:.6})
-    .add(showHome);
+  showHome();
+  startHeroEffects();
+  startSlider();
 };
 
 function showHome(){
-  document.getElementById("intro").style.display = "none";
   document.getElementById("home").style.display = "block";
   document.body.style.overflow = "auto";
-
-  startHeroEffects();
-  startSlider();
 }
 
 function startHeroEffects(){
@@ -240,20 +243,130 @@ const successModal = document.getElementById("successModal");
 
 /* open login/register form */
 function openAuth(type){
+  if(!checkRateLimit('auth_attempts', 10, 300000)) { // 10 attempts per 5 mins
+    alert(handleSecurityError('rateLimit'));
+    return;
+  }
+
   discountModal.style.display="none";
   authModal.style.display="flex";
 
-  document.getElementById("authTitle").innerText =
-    type === "signin" ? "Sign In" : "Register";
+  setTextContent(document.getElementById("authTitle"), 
+    type === "signin" ? "Sign In" : "Register");
+
+  const confirmPwdInput = document.getElementById("authConfirmPassword");
+  const strengthDiv = document.getElementById("passwordStrength");
+  
+  if (type === "register") {
+    confirmPwdInput.style.display = "block";
+    confirmPwdInput.required = true;
+    strengthDiv.style.display = "block";
+  } else {
+    confirmPwdInput.style.display = "none";
+    confirmPwdInput.required = false;
+    strengthDiv.style.display = "none";
+  }
+  
+  // Clear fields
+  document.getElementById("authEmail").value = "";
+  document.getElementById("authPassword").value = "";
+  document.getElementById("authConfirmPassword").value = "";
+  document.getElementById("authError").style.display = "none";
+  
+  // Inject CSRF token
+  injectCSRFToken();
+  document.getElementById("csrfToken").value = getCSRFToken();
 }
+
+/* Monitor password strength during typing */
+document.addEventListener('DOMContentLoaded', () => {
+  const passwordInput = document.getElementById("authPassword");
+  if (passwordInput) {
+    passwordInput.addEventListener('input', (e) => {
+      const password = e.target.value;
+      if (password.length > 0) {
+        const strengthCheck = isStrongPassword(password);
+        const strengthText = document.getElementById("passwordStrengthText");
+        const rules = strengthCheck.rules;
+        const passCount = Object.values(rules).filter(v => v).length;
+        
+        let strengthLevel = '';
+        if (passCount <= 1) strengthLevel = '❌ Weak';
+        else if (passCount <= 2) strengthLevel = '⚠️ Fair';
+        else if (passCount <= 3) strengthLevel = '✓ Good';
+        else strengthLevel = '✓✓ Strong';
+        
+        setTextContent(strengthText, `Password Strength: ${strengthLevel}`);
+      }
+    });
+  }
+});
 
 /* close auth */
 function closeAuth(){
   authModal.style.display="none";
+  clearSensitiveData();
 }
 
-/* after login/register */
+/* after login/register - SECURE */
 function completeAuth(){
+  const email = document.getElementById("authEmail").value.trim();
+  const password = document.getElementById("authPassword").value;
+  const confirmPassword = document.getElementById("authConfirmPassword").value;
+  const csrfToken = document.getElementById("csrfToken").value;
+  const authTitle = document.getElementById("authTitle").innerText;
+  const errorDiv = document.getElementById("authError");
+  
+  // Validate CSRF token
+  if (!validateCSRFToken(csrfToken)) {
+    setTextContent(errorDiv, handleSecurityError('csrf'));
+    errorDiv.style.display = "block";
+    return;
+  }
+  
+  // Validate email
+  if (!isValidEmail(email)) {
+    setTextContent(errorDiv, "Please enter a valid email address");
+    errorDiv.style.display = "block";
+    return;
+  }
+  
+  // Validate password
+  if (!password || password.length < 8) {
+    setTextContent(errorDiv, "Password must be at least 8 characters");
+    errorDiv.style.display = "block";
+    return;
+  }
+  
+  // For registration, validate password strength and confirmation
+  if (authTitle === "Register") {
+    const pwdCheck = isStrongPassword(password);
+    if (!pwdCheck.isStrong) {
+      setTextContent(errorDiv, "Password must contain uppercase, lowercase, numbers, and special characters");
+      errorDiv.style.display = "block";
+      return;
+    }
+    
+    if (!validatePasswordMatch(password, confirmPassword)) {
+      setTextContent(errorDiv, "Passwords do not match");
+      errorDiv.style.display = "block";
+      return;
+    }
+  }
+  
+  // Sanitize email before storage
+  const sanitizedEmail = sanitizeInput(email);
+  
+  // Store encrypted user session (do NOT store password)
+  const userSession = {
+    email: sanitizedEmail,
+    sessionId: generateSecureID(),
+    timestamp: Date.now()
+  };
+  
+  safeSetStorage('userSession', userSession, false);
+  
+  // Close auth modal and show success
   authModal.style.display="none";
   successModal.style.display="flex";
 }
@@ -263,11 +376,11 @@ function closeSuccess(){
   successModal.style.display="none";
 }
 function updateCartCount(){
-  const cart = JSON.parse(localStorage.getItem("beanCart")) || [];
-  const total = cart.reduce((sum,item)=>sum + item.qty,0);
+  const cart = safeGetStorage("beanCart") || [];
+  const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
 
   const countEl=document.getElementById("cartCount");
-  if(countEl) countEl.innerText=total;
+  if(countEl) setInnerText(countEl, total);
 }
 
 updateCartCount();
