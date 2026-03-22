@@ -123,8 +123,8 @@
 <div class="modal" id="discountModal">
   <div class="modal-box">
 
-    <h3>🎉 Get 10% Off Your First Order</h3>
-    <p>Sign in or register to claim your discount.</p>
+    <h3 id="discountTitle">🎉 Get 10% Off Your First Order</h3>
+    <p id="discountText">Sign in or register to claim your discount.</p>
 
     <div class="auth-buttons">
       <button onclick="openAuth('signin')">Sign In</button>
@@ -136,9 +136,10 @@
 
 <!-- AUTH MODAL -->
 <div class="modal" id="authModal">
-  <div class="modal-box">
+  <div class="modal-box auth-modal-box">
 
     <h3 id="authTitle">Sign In</h3>
+    <p class="auth-subtitle">Access your account to unlock coffee rewards and offers.</p>
 
     <input type="hidden" name="csrf_token" id="csrfToken" value="">
 
@@ -156,8 +157,11 @@
 
     <div id="authError" style="color: red; font-size: 12px; margin: 10px 0; display: none;"></div>
 
-    <button onclick="completeAuth()">Continue</button>
-    <button onclick="closeAuth()">Cancel</button>
+    <div class="auth-actions">
+      <button class="auth-secondary-btn" onclick="backToDiscount()">Back</button>
+      <button class="auth-primary-btn" onclick="completeAuth()">Continue</button>
+    </div>
+    <button class="auth-link-btn" onclick="closeAuth()">Cancel</button>
 
   </div>
 </div>
@@ -165,20 +169,22 @@
 <!-- SUCCESS MODAL -->
 <div class="modal" id="successModal">
   <div class="modal-box">
-    <h2>🎉 Congratulations!</h2>
-    <p>You have earned <b>10% discount</b> on your first order.</p>
+    <h2 id="successTitle">🎉 Congratulations!</h2>
+    <p id="successMessage">You have earned <b>10% discount</b> on your first order.</p>
     <button onclick="closeSuccess()">Start Shopping ☕</button>
   </div>
 </div>
 
 <script>
-gsap.registerPlugin(ScrollTrigger);
+if (window.gsap && window.ScrollTrigger) {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-window.onload = () => {
+window.addEventListener("load", () => {
   showHome();
   startHeroEffects();
   startSlider();
-};
+});
 
 function showHome(){
   document.getElementById("home").style.display = "block";
@@ -186,6 +192,10 @@ function showHome(){
 }
 
 function startHeroEffects(){
+  if (!window.gsap) {
+    return;
+  }
+
   gsap.to(".cup",{
     y:-25,
     duration:3,
@@ -195,13 +205,19 @@ function startHeroEffects(){
     stagger:.3
   });
 
-  gsap.to(".cup.one",{y:-120,scrollTrigger:{trigger:".info",scrub:1}});
-  gsap.to(".cup.two",{y:-160,scrollTrigger:{trigger:".info",scrub:1}});
-  gsap.to(".cup.three",{y:-100,scrollTrigger:{trigger:".info",scrub:1}});
-  gsap.to(".cup.four",{y:-180,scrollTrigger:{trigger:".info",scrub:1}});
+  if (window.ScrollTrigger) {
+    gsap.to(".cup.one",{y:-120,scrollTrigger:{trigger:".info",scrub:1}});
+    gsap.to(".cup.two",{y:-160,scrollTrigger:{trigger:".info",scrub:1}});
+    gsap.to(".cup.three",{y:-100,scrollTrigger:{trigger:".info",scrub:1}});
+    gsap.to(".cup.four",{y:-180,scrollTrigger:{trigger:".info",scrub:1}});
+  }
 }
 
 function startSlider(){
+  if (!window.gsap) {
+    return;
+  }
+
   gsap.to(".slides",{
     xPercent:-400,
     duration:25,
@@ -211,28 +227,38 @@ function startSlider(){
 }
 
 const tiltArea=document.getElementById("tiltArea");
-tiltArea.addEventListener("mousemove",(e)=>{
-  const r=tiltArea.getBoundingClientRect();
-  const x=e.clientX-r.left-r.width/2;
-  const y=e.clientY-r.top-r.height/2;
-  gsap.to(".cups",{rotateY:x/12,rotateX:-y/12,duration:.3});
-});
-tiltArea.addEventListener("mouseleave",()=>{
-  gsap.to(".cups",{rotateX:0,rotateY:0,duration:.6});
-});
+if (tiltArea) {
+  tiltArea.addEventListener("mousemove",(e)=>{
+    if (!window.gsap) {
+      return;
+    }
+
+    const r=tiltArea.getBoundingClientRect();
+    const x=e.clientX-r.left-r.width/2;
+    const y=e.clientY-r.top-r.height/2;
+    gsap.to(".cups",{rotateY:x/12,rotateX:-y/12,duration:.3});
+  });
+
+  tiltArea.addEventListener("mouseleave",()=>{
+    if (!window.gsap) {
+      return;
+    }
+
+    gsap.to(".cups",{rotateX:0,rotateY:0,duration:.6});
+  });
+}
 
 const modal = document.getElementById("discountModal");
 
-/* show popup only first time website opens */
-if(!sessionStorage.getItem("siteOpened")){
-  setTimeout(()=>{
-    modal.style.display = "flex";
-  },2500);
-
-  sessionStorage.setItem("siteOpened","true");
-}
+/* show popup when the visitor is eligible for the welcome offer */
+setTimeout(()=>{
+  if (shouldShowDiscountPrompt()) {
+    sessionStorage.setItem("discountPopupShown", "true");
+    showDiscountModal();
+  }
+},1200);
 function closeModal(){
-  modal.style.display="none";
+  discountModal.style.display="none";
 }
 function toggleMenu(){
   document.getElementById("navLinks").classList.toggle("active");
@@ -240,6 +266,45 @@ function toggleMenu(){
 const discountModal = document.getElementById("discountModal");
 const authModal = document.getElementById("authModal");
 const successModal = document.getElementById("successModal");
+const discountTitle = document.getElementById("discountTitle");
+const discountText = document.getElementById("discountText");
+const successTitle = document.getElementById("successTitle");
+const successMessage = document.getElementById("successMessage");
+let activeAuthMode = "signin";
+
+function shouldShowDiscountPrompt(){
+  return !sessionStorage.getItem("discountPopupShown");
+}
+
+function updateDiscountModalContent(){
+  const currentSession = getCurrentUserSession();
+
+  if (!currentSession) {
+    setTextContent(discountTitle, "🎉 Get 10% Off Your First Order");
+    setTextContent(discountText, "Sign in or register to claim your discount.");
+    return;
+  }
+
+  if (userCanUseWelcomeOffer()) {
+    setTextContent(discountTitle, "☕ Your Welcome Offer Is Ready");
+    setTextContent(discountText, "Sign in to continue with your saved WELCOME10 first-order discount.");
+    return;
+  }
+
+  setTextContent(discountTitle, "☕ Welcome Back");
+  setTextContent(discountText, "Your account is already registered. The first-time welcome offer has already been used, but you can still sign in and shop.");
+}
+
+function showDiscountModal(){
+  updateDiscountModalContent();
+  discountModal.style.display = "flex";
+}
+
+function showSuccessModal(title, message){
+  setTextContent(successTitle, title);
+  successMessage.innerHTML = message;
+  successModal.style.display = "flex";
+}
 
 /* open login/register form */
 function openAuth(type){
@@ -248,6 +313,7 @@ function openAuth(type){
     return;
   }
 
+  activeAuthMode = type;
   discountModal.style.display="none";
   authModal.style.display="flex";
 
@@ -308,13 +374,20 @@ function closeAuth(){
   clearSensitiveData();
 }
 
+function backToDiscount(){
+  authModal.style.display="none";
+
+  if (shouldShowDiscountPrompt()) {
+    showDiscountModal();
+  }
+}
+
 /* after login/register - SECURE */
 function completeAuth(){
   const email = document.getElementById("authEmail").value.trim();
   const password = document.getElementById("authPassword").value;
   const confirmPassword = document.getElementById("authConfirmPassword").value;
   const csrfToken = document.getElementById("csrfToken").value;
-  const authTitle = document.getElementById("authTitle").innerText;
   const errorDiv = document.getElementById("authError");
   
   // Validate CSRF token
@@ -339,7 +412,7 @@ function completeAuth(){
   }
   
   // For registration, validate password strength and confirmation
-  if (authTitle === "Register") {
+  if (activeAuthMode === "register") {
     const pwdCheck = isStrongPassword(password);
     if (!pwdCheck.isStrong) {
       setTextContent(errorDiv, "Password must contain uppercase, lowercase, numbers, and special characters");
@@ -356,19 +429,36 @@ function completeAuth(){
   
   // Sanitize email before storage
   const sanitizedEmail = sanitizeInput(email);
-  
-  // Store encrypted user session (do NOT store password)
-  const userSession = {
-    email: sanitizedEmail,
-    sessionId: generateSecureID(),
-    timestamp: Date.now()
-  };
-  
-  safeSetStorage('userSession', userSession, false);
-  
-  // Close auth modal and show success
+
+  const authResult = activeAuthMode === "register"
+    ? registerUser(sanitizedEmail, password)
+    : signInUser(sanitizedEmail, password);
+
+  if (!authResult.ok) {
+    setTextContent(errorDiv, authResult.message);
+    errorDiv.style.display = "block";
+    return;
+  }
+
   authModal.style.display="none";
-  successModal.style.display="flex";
+
+  if (authResult.isNewUser) {
+    showSuccessModal(
+      "🎉 Welcome to Bean Boutique!",
+      "Your account has been created and your <b>WELCOME10</b> first-order discount is ready."
+    );
+    return;
+  }
+
+  if (userCanUseWelcomeOffer()) {
+    showSuccessModal(
+      "☕ Welcome Back!",
+      "You are already registered. Your saved <b>WELCOME10</b> first-order discount is still available."
+    );
+    return;
+  }
+
+  alert(authResult.message);
 }
 
 /* close success popup */

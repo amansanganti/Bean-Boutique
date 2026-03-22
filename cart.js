@@ -2,6 +2,22 @@
  * SECURE Cart Functions with Input Validation & XSS Prevention
  */
 
+function getCartItemCount() {
+  const cart = safeGetStorage("beanCart") || [];
+  if (!Array.isArray(cart)) {
+    return 0;
+  }
+
+  return cart.reduce((sum, item) => sum + (parseInt(item.qty, 10) || 0), 0);
+}
+
+function refreshCartBadge() {
+  const countEl = document.getElementById("cartCount");
+  if (countEl) {
+    setInnerText(countEl, String(getCartItemCount()));
+  }
+}
+
 // Validate price is a positive number
 function isValidPrice(price) {
   const priceNum = parseFloat(price);
@@ -71,7 +87,7 @@ function addToCart(name, price, image){
   const saved = safeSetStorage("beanCart", cart);
   if (saved) {
     alert(sanitizeHTML(name) + " added to cart ☕");
-    updateCartCount();
+    refreshCartBadge();
   } else {
     alert("Error saving to cart. Please try again.");
   }
@@ -93,7 +109,7 @@ function removeFromCart(itemName) {
   if (index > -1) {
     cart.splice(index, 1);
     safeSetStorage("beanCart", cart);
-    updateCartCount();
+    refreshCartBadge();
     loadCart(); // Refresh cart display
   }
 }
@@ -113,7 +129,7 @@ function updateCartQuantity(itemName, newQty) {
   if (item) {
     item.qty = parseInt(newQty);
     safeSetStorage("beanCart", cart);
-    updateCartCount();
+    refreshCartBadge();
   }
 }
 
@@ -188,8 +204,6 @@ function secureCheckout() {
 // Clear cart safely
 function clearCart() {
   localStorage.removeItem("beanCart");
-  updateCartCount();
+  refreshCartBadge();
   alert("Cart cleared");
-}
-
 }

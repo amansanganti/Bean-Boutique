@@ -170,6 +170,7 @@ function handleContactSubmit(event) {
 
   // In production, send this to server via HTTPS with verification
   console.log("Contact form submission validated:", contactData);
+  saveContactRecord(contactData);
 
   // Show success message
   alert("✓ Thank you for your message! We'll get back to you soon.");
@@ -191,16 +192,6 @@ function updateCartCount(){
 
   const countEl=document.getElementById("cartCount");
   if(countEl) setInnerText(countEl, total);
-}
-
-updateCartCount();
-</script>
-function updateCartCount(){
-  const cart = JSON.parse(localStorage.getItem("beanCart")) || [];
-  const total = cart.reduce((sum,item)=>sum + item.qty,0);
-
-  const countEl=document.getElementById("cartCount");
-  if(countEl) countEl.innerText=total;
 }
 
 updateCartCount();

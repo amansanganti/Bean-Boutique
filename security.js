@@ -241,6 +241,227 @@ function safeGetStorage(key, sensitive = false) {
   }
 }
 
+function normalizeEmail(email) {
+  return sanitizeInput(email).toLowerCase();
+}
+
+function getAppDatabase() {
+  const defaultDatabase = {
+    users: [],
+    contacts: [],
+    subscriptions: [],
+    auditLog: []
+  };
+
+  const database = safeGetStorage('beanBoutiqueDB') || defaultDatabase;
+
+  return {
+    ...defaultDatabase,
+    ...database,
+    users: Array.isArray(database.users) ? database.users : [],
+    contacts: Array.isArray(database.contacts) ? database.contacts : [],
+    subscriptions: Array.isArray(database.subscriptions) ? database.subscriptions : [],
+    auditLog: Array.isArray(database.auditLog) ? database.auditLog : []
+  };
+}
+
+function saveAppDatabase(database) {
+  return safeSetStorage('beanBoutiqueDB', database);
+}
+
+function addAuditLog(action, email = '', extra = {}) {
+  const database = getAppDatabase();
+
+  database.auditLog.push({
+    id: generateSecureID(),
+    action: sanitizeInput(action),
+    email: normalizeEmail(email),
+    timestamp: Date.now(),
+    ...extra
+  });
+
+  saveAppDatabase(database);
+}
+
+function findUserByEmail(email) {
+  const normalizedEmail = normalizeEmail(email);
+  const database = getAppDatabase();
+
+  return database.users.find(user => user.email === normalizedEmail) || null;
+}
+
+function saveUserRecord(userRecord) {
+  const database = getAppDatabase();
+  const existingIndex = database.users.findIndex(user => user.email === userRecord.email);
+
+  if (existingIndex >= 0) {
+    database.users[existingIndex] = userRecord;
+  } else {
+    database.users.push(userRecord);
+  }
+
+  saveAppDatabase(database);
+}
+
+function createUserSession(userRecord) {
+  const welcomeOffer = Array.isArray(userRecord.offers)
+    ? userRecord.offers.find(offer => offer.code === 'WELCOME10')
+    : null;
+
+  const userSession = {
+    email: userRecord.email,
+    userId: userRecord.id,
+    firstName: userRecord.firstName || '',
+    hasClaimedWelcomeOffer: !!userRecord.hasClaimedWelcomeOffer,
+    welcomeOfferCode: welcomeOffer && !welcomeOffer.redeemed ? 'WELCOME10' : '',
+    sessionId: generateSecureID(),
+    timestamp: Date.now()
+  };
+
+  safeSetStorage('userSession', userSession);
+  return userSession;
+}
+
+function registerUser(email, password) {
+  const normalizedEmail = normalizeEmail(email);
+  const existingUser = findUserByEmail(normalizedEmail);
+
+  if (existingUser) {
+    return {
+      ok: false,
+      message: 'This email is already registered. Please sign in instead.'
+    };
+  }
+
+  const userRecord = {
+    id: generateSecureID(),
+    email: normalizedEmail,
+    passwordHash: hashPassword(password),
+    firstName: normalizedEmail.split('@')[0],
+    hasClaimedWelcomeOffer: true,
+    offers: [
+      {
+        code: 'WELCOME10',
+        type: 'welcome',
+        claimedAt: Date.now(),
+        redeemed: false
+      }
+    ],
+    signInCount: 1,
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    lastLoginAt: Date.now()
+  };
+
+  saveUserRecord(userRecord);
+  createUserSession(userRecord);
+  addAuditLog('register', normalizedEmail);
+
+  return {
+    ok: true,
+    isNewUser: true,
+    user: userRecord,
+    message: 'Registration complete. Your first-order offer is ready.'
+  };
+}
+
+function signInUser(email, password) {
+  const normalizedEmail = normalizeEmail(email);
+  const userRecord = findUserByEmail(normalizedEmail);
+
+  if (!userRecord) {
+    return {
+      ok: false,
+      message: 'No account found for this email. Please register first.'
+    };
+  }
+
+  if (userRecord.passwordHash !== hashPassword(password)) {
+    return {
+      ok: false,
+      message: 'Incorrect password. Please try again.'
+    };
+  }
+
+  userRecord.signInCount = (userRecord.signInCount || 0) + 1;
+  userRecord.lastLoginAt = Date.now();
+  userRecord.updatedAt = Date.now();
+
+  saveUserRecord(userRecord);
+  createUserSession(userRecord);
+  addAuditLog('signin', normalizedEmail);
+
+  return {
+    ok: true,
+    isNewUser: false,
+    user: userRecord,
+    message: userRecord.hasClaimedWelcomeOffer
+      ? 'Welcome back. Your first-time offer has already been used on this account.'
+      : 'Signed in successfully.'
+  };
+}
+
+function getCurrentUserSession() {
+  return safeGetStorage('userSession') || null;
+}
+
+function getCurrentUserRecord() {
+  const session = getCurrentUserSession();
+  if (!session || !session.email) {
+    return null;
+  }
+
+  return findUserByEmail(session.email);
+}
+
+function userCanUseWelcomeOffer() {
+  const userRecord = getCurrentUserRecord();
+  if (!userRecord || !Array.isArray(userRecord.offers)) {
+    return false;
+  }
+
+  return userRecord.offers.some(offer => offer.code === 'WELCOME10' && !offer.redeemed);
+}
+
+function markOfferRedeemed(code, email = '') {
+  const normalizedCode = sanitizeInput(code).toUpperCase();
+  const targetEmail = email ? normalizeEmail(email) : (getCurrentUserSession()?.email || '');
+  const userRecord = findUserByEmail(targetEmail);
+
+  if (!userRecord || !Array.isArray(userRecord.offers)) {
+    return false;
+  }
+
+  const offer = userRecord.offers.find(item => item.code === normalizedCode);
+  if (!offer || offer.redeemed) {
+    return false;
+  }
+
+  offer.redeemed = true;
+  offer.redeemedAt = Date.now();
+  userRecord.updatedAt = Date.now();
+  saveUserRecord(userRecord);
+  createUserSession(userRecord);
+  addAuditLog('offer_redeemed', targetEmail, { offerCode: normalizedCode });
+  return true;
+}
+
+function saveContactRecord(contactData) {
+  const database = getAppDatabase();
+  database.contacts.push(contactData);
+  saveAppDatabase(database);
+  addAuditLog('contact_saved', contactData.email || '');
+}
+
+function saveSubscriptionRecord(subscriptionData) {
+  const database = getAppDatabase();
+  database.subscriptions.push(subscriptionData);
+  saveAppDatabase(database);
+  addAuditLog('subscription_saved', subscriptionData.email || '', {
+    planName: subscriptionData.planName || ''
+  });
+}
+
 // Clear sensitive data
 function clearSensitiveData() {
   const sensitiveKeys = ['authToken', 'sessionPassword', 'paymentInfo'];

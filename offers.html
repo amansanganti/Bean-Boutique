@@ -55,8 +55,8 @@
 
   <div class="offer-card">
     <h3>☕ First Order Discount</h3>
-    <p>Get <strong>10% OFF</strong> on your first coffee purchase.</p>
-    <span class="offer-tag">WELCOME10</span>
+    <p id="welcomeOfferText">Get <strong>10% OFF</strong> on your first coffee purchase.</p>
+    <span class="offer-tag" id="welcomeOfferCode">WELCOME10</span>
   </div>
 
   <div class="offer-card">
@@ -213,6 +213,28 @@ gsap.from(".subscription-card",{
 function toggleMenu(){
   document.getElementById("navLinks").classList.toggle("active");
 }
+
+function updateWelcomeOfferCard() {
+  const welcomeOfferText = document.getElementById("welcomeOfferText");
+  const welcomeOfferCode = document.getElementById("welcomeOfferCode");
+  const currentSession = getCurrentUserSession();
+
+  if (!currentSession) {
+    welcomeOfferText.innerHTML = "Register or sign in to unlock your <strong>10% OFF</strong> first-order offer.";
+    setTextContent(welcomeOfferCode, "SIGN UP");
+    return;
+  }
+
+  if (userCanUseWelcomeOffer()) {
+    welcomeOfferText.innerHTML = "Your account still has <strong>10% OFF</strong> ready for the first order.";
+    setTextContent(welcomeOfferCode, "WELCOME10");
+    return;
+  }
+
+  welcomeOfferText.innerHTML = "This account has already used the welcome offer. Explore the other deals below.";
+  setTextContent(welcomeOfferCode, "USED");
+}
+
 function updateCartCount(){
   const cart = safeGetStorage("beanCart") || [];
   const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
@@ -350,6 +372,7 @@ function handleSubscription(event) {
 
   // Save subscription data securely
   safeSetStorage('subscription', subscriptionData);
+  saveSubscriptionRecord(subscriptionData);
 
   // Show success message
   alert("✓ Subscription initiated! Check your email for confirmation.");
@@ -361,6 +384,7 @@ function handleSubscription(event) {
   document.getElementById("subscriptionForm").reset();
 }
 
+updateWelcomeOfferCard();
 updateCartCount();
 </script>
 </body>

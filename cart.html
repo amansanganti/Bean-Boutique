@@ -68,7 +68,7 @@
     <p>Discount: $<span id="discountAmount">0</span></p>
     <p><b>Total Price: $<span id="totalPrice">0</span></b></p>
 
-    <button class="checkout-btn">Proceed to Checkout</button>
+    <button class="checkout-btn" onclick="secureCheckout()">Proceed to Checkout</button>
   </div>
 </section>
 
@@ -88,7 +88,7 @@ const subtotalEl = document.getElementById("subtotalPrice");
 const totalPriceEl = document.getElementById("totalPrice");
 const discountEl = document.getElementById("discountAmount");
 
-let cart = safeGetStorage("beanCart") || [];
+let cart = [];
 let discount = 0;
 
 // available coupons
@@ -98,7 +98,13 @@ const coupons = {
   "FREESHIP": 0.15
 };
 
+function getStoredCart(){
+  const storedCart = safeGetStorage("beanCart") || [];
+  return Array.isArray(storedCart) ? storedCart : [];
+}
+
 function renderCart(){
+  cart = getStoredCart();
   cartContainer.innerHTML = "";
 
   let subtotal = 0;
@@ -131,20 +137,26 @@ function renderCart(){
 
   let finalTotal = subtotal - discount;
 
+  setInnerText(discountEl, discount.toFixed(2));
   setInnerText(itemCountEl, count);
   setInnerText(subtotalEl, subtotal.toFixed(2));
   setInnerText(totalPriceEl, finalTotal.toFixed(2));
 
   safeSetStorage("beanCart", cart);
+  refreshCartBadge();
 }
 
 function updateQty(index,value){
-  cart[index].qty=parseInt(value);
+  cart = getStoredCart();
+  cart[index].qty=parseInt(value, 10) || 1;
+  safeSetStorage("beanCart", cart);
   renderCart();
 }
 
 function removeItem(index){
+  cart = getStoredCart();
   cart.splice(index,1);
+  safeSetStorage("beanCart", cart);
   renderCart();
 }
 
@@ -152,9 +164,29 @@ function applyCoupon(){
   const code=document.getElementById("couponCode").value.toUpperCase();
   let subtotal=parseFloat(subtotalEl.innerText);
 
+  if (code === "WELCOME10") {
+    const currentSession = getCurrentUserSession();
+
+    if (!currentSession) {
+      alert("Please register or sign in before using WELCOME10.");
+      return;
+    }
+
+    if (!userCanUseWelcomeOffer()) {
+      alert("This account has already used the welcome offer.");
+      discount=0;
+      discountEl.innerText=0;
+      renderCart();
+      return;
+    }
+  }
+
   if(coupons[code]){
     discount=subtotal * coupons[code];
     discountEl.innerText=discount.toFixed(2);
+    if (code === "WELCOME10") {
+      markOfferRedeemed("WELCOME10");
+    }
     alert("Coupon Applied ✅");
   } else{
     discount=0;
@@ -166,15 +198,6 @@ function applyCoupon(){
 }
 
 renderCart();
-function updateCartCount(){
-  const cart = safeGetStorage("beanCart") || [];
-  const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
-
-  const countEl=document.getElementById("cartCount");
-  if(countEl) setInnerText(countEl, total);
-}
-
-updateCartCount();
 </script>
 </body>
 </html>
