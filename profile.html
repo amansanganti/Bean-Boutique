@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Profile | Bean Boutique</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Security Headers -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self';">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+<meta http-equiv="Permissions-Policy" content="geolocation=(), microphone=(), camera=()">
+
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="profile.css">
+
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="security.js"></script>
+<script src="cart.js"></script>
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="logo">
+    <img src="logo.png" alt="Bean Boutique">
+    <span>Bean Boutique</span>
+  </div>
+
+  <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+  <nav class="nav-links" id="navLinks">
+    <a href="index.html">Home</a>
+    <a href="coffee-selection.html">Beans</a>
+    <a href="brewing.html">Brewing</a>
+    <a href="events.html">Events</a>
+    <a href="contact.html">Contact</a>
+    <a href="offers.html">Offers</a>
+    <a href="cart.html" class="cart-icon">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span id="cartCount">0</span>
+    </a>
+    <a href="profile.html" class="profile-icon active">
+      <i class="fa-solid fa-user"></i>
+    </a>
+  </nav>
+</header>
+
+<main class="profile-page">
+  <section class="profile-hero">
+    <div class="profile-header-content">
+      <div class="avatar-container">
+        <img src="avatar.jpg" alt="User Avatar" id="userAvatar">
+        <button class="edit-avatar"><i class="fa-solid fa-camera"></i></button>
+      </div>
+      <div class="user-meta">
+        <h1 id="userName">Alex Thompson</h1>
+        <p id="userEmail">alex.t@example.com</p>
+        <span class="membership-badge">Gold Member</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="profile-dashboard">
+    <div class="dashboard-container">
+      <aside class="dashboard-sidebar">
+        <nav class="dashboard-nav">
+          <button class="nav-item active" onclick="switchTab(event, 'overview')">
+            <i class="fa-solid fa-gauge-high"></i> Overview
+          </button>
+          <button class="nav-item" onclick="switchTab(event, 'orders')">
+            <i class="fa-solid fa-bag-shopping"></i> My Orders
+          </button>
+          <button class="nav-item" onclick="switchTab(event, 'loyalty')">
+            <i class="fa-solid fa-star"></i> Loyalty Points
+          </button>
+          <button class="nav-item" onclick="switchTab(event, 'settings')">
+            <i class="fa-solid fa-gear"></i> Settings
+          </button>
+          <button class="nav-item logout-btn" onclick="handleLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </nav>
+      </aside>
+
+      <div class="dashboard-content">
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-pane active">
+          <h2>Welcome back, Alex!</h2>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <i class="fa-solid fa-mug-hot"></i>
+              <div class="stat-info">
+                <span class="stat-value">24</span>
+                <span class="stat-label">Coffees Ordered</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <i class="fa-solid fa-coins"></i>
+              <div class="stat-info">
+                <span class="stat-value">1,250</span>
+                <span class="stat-label">Points Earned</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <i class="fa-solid fa-calendar-check"></i>
+              <div class="stat-info">
+                <span class="stat-value">12</span>
+                <span class="stat-label">Events Attended</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="recent-activity">
+            <h3>Recent Activity</h3>
+            <ul class="activity-list">
+              <li>
+                <div class="activity-icon"><i class="fa-solid fa-check"></i></div>
+                <div class="activity-detail">
+                  <p>Ordered <strong>Ethiopian Yirgacheffe</strong></p>
+                  <span>2 days ago</span>
+                </div>
+              </li>
+              <li>
+                <div class="activity-icon"><i class="fa-solid fa-calendar"></i></div>
+                <div class="activity-detail">
+                  <p>Registered for <strong>Coffee Tasting Evening</strong></p>
+                  <span>1 week ago</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div id="orders-tab" class="tab-pane">
+          <h2>Order History</h2>
+          <div class="orders-table-container">
+            <table class="orders-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Items</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#BB-1024</td>
+                  <td>Mar 22, 2026</td>
+                  <td>Ethiopian Yirgacheffe x2</td>
+                  <td>$8.82</td>
+                  <td><span class="status-badge delivered">Delivered</span></td>
+                </tr>
+                <tr>
+                  <td>#BB-1019</td>
+                  <td>Mar 15, 2026</td>
+                  <td>French Press, House Blend</td>
+                  <td>$20.97</td>
+                  <td><span class="status-badge delivered">Delivered</span></td>
+                </tr>
+                <tr>
+                  <td>#BB-0988</td>
+                  <td>Feb 28, 2026</td>
+                  <td>Colombian Supremo x1</td>
+                  <td>$3.86</td>
+                  <td><span class="status-badge delivered">Delivered</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Loyalty Tab -->
+        <div id="loyalty-tab" class="tab-pane">
+          <h2>Loyalty Points</h2>
+          <div class="loyalty-card">
+            <div class="loyalty-header">
+              <div class="points-circle">
+                <span class="points-number">1250</span>
+                <span class="points-text">Points</span>
+              </div>
+              <div class="loyalty-meta">
+                <h3>Gold Status</h3>
+                <p>You're 250 points away from a <strong>Free Brewing Kit!</strong></p>
+              </div>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" style="width: 83%"></div>
+            </div>
+            <div class="progress-labels">
+              <span>Current: 1,250</span>
+              <span>Target: 1,500</span>
+            </div>
+          </div>
+          
+          <div class="rewards-grid">
+            <h3>Available Rewards</h3>
+            <div class="reward-item">
+              <div class="reward-info">
+                <h4>Free Espresso Shot</h4>
+                <p>Redeem for 200 points</p>
+              </div>
+              <button class="redeem-btn">Redeem</button>
+            </div>
+            <div class="reward-item">
+              <div class="reward-info">
+                <h4>15% OFF Beans</h4>
+                <p>Redeem for 500 points</p>
+              </div>
+              <button class="redeem-btn">Redeem</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-pane">
+          <h2>Account Settings</h2>
+          <form class="settings-form" onsubmit="event.preventDefault(); alert('Profile updated!');">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" value="Alex Thompson">
+              </div>
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" value="alex.t@example.com">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" value="********">
+              <button type="button" class="change-link">Change Password</button>
+            </div>
+            <div class="form-group checkbox-group">
+              <input type="checkbox" id="newsletter" checked>
+              <label for="newsletter">Receive weekly coffee tips and offers</label>
+            </div>
+            <button type="submit" class="save-settings-btn">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <a href="https://www.instagram.com" class="instagram"><i class="fa-brands fa-instagram"></i></a>
+  <a href="https://www.facebook.com" class="facebook"><i class="fa-brands fa-facebook"></i></a>
+  <a href="https://www.twitter.com" class="twitter"><i class="fa-brands fa-twitter"></i></a>
+  
+  <br><br>
+  © 2026 Bean Boutique | Brewed with ❤️
+</footer>
+
+<script src="profile.js"></script>
+<script>
+function toggleMenu(){
+  document.getElementById("navLinks").classList.toggle("active");
+}
+function updateCartCount(){
+  const cart = safeGetStorage("beanCart") || [];
+  const total = cart.reduce((sum,item)=>sum + (item.qty || 0),0);
+
+  const countEl=document.getElementById("cartCount");
+  if(countEl) setInnerText(countEl, total);
+}
+updateCartCount();
+
+// Initial animations
+gsap.from(".profile-hero", { opacity: 0, y: -50, duration: 1, ease: "power3.out" });
+gsap.from(".dashboard-container", { opacity: 0, y: 30, duration: 1, delay: 0.3, ease: "power3.out" });
+</script>
+
+</body>
+</html>
